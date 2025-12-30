@@ -3,35 +3,62 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Country;
-use App\Models\State;
-use App\Models\City;
-use App\Models\Area;
+use App\Models\ServiceArea;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
     public function getCountries()
     {
-        $countries = Country::all();
-        return response()->json(['countries' => $countries]);
+        \Log::info('getCountries hit');
+        $countries = ServiceArea::distinct()->orderBy('country')->pluck('country');
+        
+        $formatted = $countries->map(function($country) {
+            return ['id' => $country, 'name' => $country];
+        });
+
+        \Log::info('Countries found: ' . $formatted->count());
+        return response()->json(['countries' => $formatted]);
     }
 
-    public function getStates($countryId)
+    public function getStates($country)
     {
-        $states = State::where('country_id', $countryId)->get();
-        return response()->json(['states' => $states]);
+        $states = ServiceArea::where('country', $country)
+            ->distinct()
+            ->orderBy('state')
+            ->pluck('state');
+        
+        $formatted = $states->map(function($state) {
+            return ['id' => $state, 'name' => $state];
+        });
+
+        return response()->json(['states' => $formatted]);
     }
 
-    public function getCities($stateId)
+    public function getCities($state)
     {
-        $cities = City::where('state_id', $stateId)->get();
-        return response()->json(['cities' => $cities]);
+        $cities = ServiceArea::where('state', $state)
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+        
+        $formatted = $cities->map(function($city) {
+            return ['id' => $city, 'name' => $city];
+        });
+
+        return response()->json(['cities' => $formatted]);
     }
 
-    public function getAreas($cityId)
+    public function getAreas($city)
     {
-        $areas = Area::where('city_id', $cityId)->get();
-        return response()->json(['areas' => $areas]);
+        $areas = ServiceArea::where('city', $city)
+            ->orderBy('area')
+            ->get();
+        
+        $formatted = $areas->map(function($area) {
+            return ['id' => $area->id, 'name' => $area->area];
+        });
+
+        return response()->json(['areas' => $formatted]);
     }
 }

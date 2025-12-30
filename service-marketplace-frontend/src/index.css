@@ -7,6 +7,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+:root {
+  /* Global Color Palette - Light Theme */
+  --primary-color: #3b82f6;
+  /* Electric Blue */
+  --primary-hover: #2563eb;
+  --bg-dark: #f8fafc;
+  /* Changed to Light Gray/White */
+  --card-bg: #ffffff;
+  /* White Cards */
+  --card-border: #e2e8f0;
+  /* Light Slate Border */
+  --text-main: #1e293b;
+  /* Dark Slate Text */
+  --text-muted: #64748b;
+  /* Muted Slate */
+  --danger: #ef4444;
+  --success: #10b981;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
