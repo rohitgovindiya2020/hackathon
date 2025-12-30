@@ -1,0 +1,875 @@
+/* 
+  Provider Detail - High Specificity Styling
+  Using pd- prefix to avoid global CSS collisions
+*/
+
+.pd-wrapper {
+    background: #fcfdfe;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+}
+
+.pd-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* --- Hero Section --- */
+.pd-wrapper .pd-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    padding: 100px 0 80px !important;
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+    min-height: 480px !important;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pd-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(37, 99, 235, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.pd-hero-grid {
+    display: grid !important;
+    grid-template-columns: 260px 1fr 320px !important;
+    gap: 60px !important;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+.pd-avatar-frame {
+    width: 260px;
+    height: 260px;
+    border-radius: 48px;
+    position: relative;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
+}
+
+.pd-avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 40px;
+}
+
+.pd-pro-badge {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+}
+
+.pd-rating-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pd-rating-badge svg {
+    width: 16px;
+    height: 16px;
+    color: #fbbf24;
+}
+
+.pd-rating-badge strong {
+    font-size: 15px;
+}
+
+.pd-rating-badge span {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+.pd-locality-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pd-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.pd-name {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: -3px;
+    line-height: 0.95;
+    margin: 0 0 20px;
+    background: linear-gradient(to bottom, #fff, #cbd5e1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.pd-tagline {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.pd-cta-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 32px;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+}
+
+.pd-starting-price label {
+    display: block;
+    font-size: 13px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.pd-price-val {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.pd-btn-primary {
+    width: 100%;
+    background: #3b82f6;
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    border: none;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 12px;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.pd-btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.pd-btn-secondary {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* --- Body Layout --- */
+.pd-body-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 80px;
+    padding: 80px 0;
+}
+
+.pd-tabs {
+    display: flex;
+    gap: 40px;
+    border-bottom: 2px solid #f1f5f9;
+    margin-bottom: 50px;
+}
+
+.pd-tabs button {
+    background: none;
+    border: none;
+    padding: 20px 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #64748b;
+    cursor: pointer;
+    position: relative;
+    transition: 0.3s;
+}
+
+.pd-tabs button.active {
+    color: #0f172a;
+}
+
+.pd-tabs button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #3b82f6;
+    border-radius: 10px;
+}
+
+.pd-section-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 35px;
+    letter-spacing: -1px;
+}
+
+.pd-bio-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #475569;
+    margin-bottom: 50px;
+}
+
+/* --- Service Cards --- */
+.pd-services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.pd-service-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 28px;
+    padding: 30px;
+    transition: 0.4s;
+    display: flex;
+    flex-direction: column;
+}
+
+.pd-service-card:hover {
+    border-color: #3b82f6;
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+}
+
+.pd-service-header {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.pd-service-icon {
+    width: 56px;
+    height: 56px;
+    background: #f8fafc;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.pd-service-meta h4 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.pd-service-meta span {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.pd-service-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 20px;
+    margin-top: auto;
+}
+
+.pd-service-price {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+.pd-btn-add {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pd-btn-add:hover {
+    background: #0f172a;
+    color: white;
+}
+
+/* --- Service Card Discount Styles --- */
+.pd-service-discount-badge {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.pd-discount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.pd-discount-tag {
+    background: #2563eb;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 8px;
+    text-transform: uppercase;
+}
+
+.pd-discount-joined {
+    font-size: 12px;
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.pd-discount-progress {
+    background: #dbeafe;
+    height: 6px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.pd-discount-bar {
+    background: #3b82f6;
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.pd-btn-interest {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.pd-btn-interest:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+/* --- Review Cards --- */
+.pd-review-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 32px;
+    padding: 40px;
+    margin-bottom: 30px;
+}
+
+.pd-review-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.pd-user-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 24px;
+}
+
+.pd-user-info {
+    flex: 1;
+}
+
+.pd-user-info strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.pd-user-info span {
+    font-size: 13px;
+    color: #10b981;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.pd-review-stars {
+    display: flex;
+    gap: 4px;
+}
+
+.pd-review-stars svg {
+    width: 18px;
+    height: 18px;
+}
+
+.pd-review-body {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #334155;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.pd-review-date {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+/* --- Sidebar --- */
+.pd-sticky {
+    position: sticky;
+    top: 110px;
+}
+
+.pd-side-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 32px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.pd-side-title {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 1.5px;
+    margin-bottom: 30px;
+}
+
+.pd-location-box {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.pd-loc-icon {
+    font-size: 28px;
+}
+
+.pd-addr-main {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.pd-addr-sub {
+    font-size: 15px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.pd-map-placeholder {
+    background: #f8fafc;
+    height: 160px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    border: 2px dashed #e2e8f0;
+}
+
+.pd-trust-shield {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pd-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f1f5f9;
+    padding: 15px 20px;
+    border-radius: 16px;
+}
+
+.pd-trust-icon {
+    font-size: 20px;
+}
+
+.pd-trust-item p {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* --- Animations --- */
+.animate-up {
+    animation: pdSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pdSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Responsive --- */
+@media (max-width: 1200px) {
+    .pd-hero-grid {
+        grid-template-columns: 200px 1fr;
+    }
+
+    .pd-cta-card {
+        grid-column: span 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pd-starting-price {
+        margin-bottom: 0;
+    }
+
+    .pd-btn-primary {
+        width: auto;
+        min-width: 220px;
+        margin-bottom: 0;
+    }
+
+    .pd-btn-secondary {
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .pd-body-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .pd-sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .pd-hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .pd-avatar-frame {
+        margin: 0 auto;
+        width: 200px;
+        height: 200px;
+    }
+
+    .pd-meta-row {
+        justify-content: center;
+    }
+
+    .pd-name {
+        font-size: 2.8rem;
+    }
+}
+
+/* --- About Tab & Promo Card --- */
+.pd-promo-card {
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-top: 40px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.pd-promo-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: #3b82f6;
+}
+
+.pd-promo-icon {
+    width: 64px;
+    height: 64px;
+    background: #eff6ff;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.pd-promo-content {
+    flex: 1;
+}
+
+.pd-promo-content h4 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.pd-promo-content p {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.pd-progress-wrap {
+    background: #f1f5f9;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.pd-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.pd-progress-track {
+    background: #e2e8f0;
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.pd-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+.pd-btn-promo {
+    background: #0f172a;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.pd-btn-promo:hover {
+    background: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+}
+
+@media (max-width: 768px) {
+    .pd-promo-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px;
+    }
+
+    .pd-promo-card::before {
+        width: 100%;
+        height: 6px;
+        top: 0;
+        left: 0;
+    }
+
+    .pd-promo-icon {
+        margin-bottom: 10px;
+    }
+
+    .pd-btn-promo {
+        width: 100%;
+    }
+}
+
+/* --- Review Form --- */
+.pd-review-form-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 35px;
+    margin-bottom: 40px;
+}
+
+.pd-review-form-card h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 25px;
+}
+
+.pd-form-rating-group {
+    margin-bottom: 25px;
+}
+
+.pd-form-rating-group label,
+.pd-form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.pd-star-input {
+    display: flex;
+    gap: 8px;
+}
+
+.pd-star-input svg {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.pd-star-input svg:hover {
+    transform: scale(1.1);
+}
+
+.pd-form-textarea {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    font-size: 16px;
+    font-family: inherit;
+    color: #1e293b;
+    resize: vertical;
+    transition: 0.3s;
+    background: white;
+}
+
+.pd-form-textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.pd-btn-submit {
+    background: #0f172a;
+    color: white;
+    padding: 16px 32px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.pd-btn-submit:hover:not(:disabled) {
+    background: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+}
+
+.pd-btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.pd-login-prompt {
+    background: #f1f5f9;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.pd-login-prompt a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 800;
+}
+
+.pd-login-prompt a:hover {
+    text-decoration: underline;
+}

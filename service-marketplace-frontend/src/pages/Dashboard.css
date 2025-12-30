@@ -1,129 +1,243 @@
-.dashboard-container {
+/* Unified Dashboard Styles */
+
+.dashboard-page-wrapper {
+    background-color: #f8fafc;
     min-height: 100vh;
-    background: #f5f7fa;
 }
 
-.dashboard-nav {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px 40px;
+.dashboard-main {
+    padding-top: 100px;
+}
+
+/* Welcome Banner */
+.dashboard-welcome-banner {
+    background: white;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.03);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-nav h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
-.nav-user {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.nav-user span {
-    font-size: 14px;
-}
-
-.btn-logout {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 8px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.btn-logout:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.dashboard-content {
-    padding: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.dashboard-header {
     margin-bottom: 40px;
 }
 
-.dashboard-header h2 {
-    color: #333;
-    font-size: 32px;
+.welcome-text h1 {
+    font-size: 42px;
+    font-weight: 800;
     margin-bottom: 10px;
 }
 
-.dashboard-header p {
-    color: #666;
-    font-size: 16px;
+.welcome-text p {
+    color: #64748b;
+    font-size: 18px;
 }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-}
-
-.dashboard-card {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.dashboard-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-}
-
-.dashboard-card h3 {
-    color: #333;
-    font-size: 20px;
+.badge-pro {
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
     margin-bottom: 12px;
 }
 
-.dashboard-card p {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 20px;
-    line-height: 1.6;
+.welcome-stats {
+    display: flex;
+    gap: 20px;
 }
 
-.btn-secondary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
+.stat-pill {
+    background: #f1f5f9;
+    padding: 20px 30px;
+    border-radius: 20px;
+    text-align: center;
+    min-width: 160px;
+}
+
+.stat-val {
+    display: block;
+    font-size: 28px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 13px;
     font-weight: 600;
-    transition: transform 0.2s, box-shadow 0.2s;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.btn-secondary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+/* Success Banner */
+.success-banner {
+    background: #dcfce7;
+    color: #166534;
+    padding: 16px 24px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Actions Grid */
+.dashboard-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.action-card-modern {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    display: flex;
+    gap: 24px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-card-modern:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.2);
+}
+
+.card-icon-blob {
+    width: 64px;
+    height: 64px;
+    background: #f1f5f9;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+    transition: transform 0.4s ease;
+}
+
+.action-card-modern:hover .card-icon-blob {
+    transform: scale(1.1) rotate(-5deg);
+    background: #eff6ff;
+}
+
+.card-body h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1e293b;
+}
+
+.card-body p {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.btn-card-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: #667eea;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 0;
+    transition: gap 0.3s ease;
+}
+
+.btn-card-action:hover {
+    gap: 12px;
+    color: #764ba2;
+}
+
+.btn-card-action svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Recent Activity Section */
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-header-row h2 {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.btn-text-only {
+    background: none;
+    border: none;
+    color: #667eea;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.activity-placeholder-card {
+    background: white;
+    padding: 60px;
+    border-radius: 30px;
+    text-align: center;
+    border: 2px dashed #e2e8f0;
+}
+
+.activity-placeholder-card p {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.no-bookings-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.placeholder-icon {
+    font-size: 40px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-welcome-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
 }
 
 @media (max-width: 768px) {
-    .dashboard-nav {
+    .welcome-text h1 {
+        font-size: 32px;
+    }
+
+    .welcome-stats {
         flex-direction: column;
-        gap: 15px;
+        width: 100%;
+    }
+
+    .stat-pill {
+        width: 100%;
+    }
+
+    .action-card-modern {
+        flex-direction: column;
         text-align: center;
-    }
-
-    .dashboard-content {
-        padding: 20px;
-    }
-
-    .dashboard-grid {
-        grid-template-columns: 1fr;
+        align-items: center;
     }
 }

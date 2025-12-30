@@ -1,71 +1,77 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import '../Dashboard.css';
+import { Header, Footer } from '../../components/Common';
+import styles from './ProviderDashboard.module.css';
 
 const ProviderDashboard = () => {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
-        await logout();
-        navigate('/login');
-    };
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    const providerActions = [
+        { title: 'My Services', desc: 'Create and manage your professional listings', icon: '📋', link: '/provider/services', btnText: 'Manage All' },
+        { title: 'New Discount', desc: 'Promote services with time-limited offers', icon: '🎯', link: '/provider/discounts', btnText: 'Go Live' },
+        { title: 'Approved Discount Card', desc: 'View and manage your approved discounts', icon: '✅', link: '/provider/approved-discounts', btnText: 'View Approved' }
+    ];
 
     return (
-        <div className="dashboard-container">
-            <nav className="dashboard-nav">
-                <h1>Service Marketplace - Provider</h1>
-                <div className="nav-user">
-                    <span>Welcome, {user?.name}</span>
-                    <button onClick={handleLogout} className="btn-logout">Logout</button>
+        <div className={styles['dashboard-page-wrapper']}>
+            <Header />
+
+            <main className={`${styles['dashboard-main']} section-padding`}>
+                <div className={styles.container}>
+                    {/* Provider Welcome Header */}
+                    <div className={`${styles['dashboard-welcome-banner']} ${styles['animate-up']}`}>
+                        <div className={styles['welcome-text']}>
+                            <span className={styles['badge-pro']}>PRO Partner</span>
+                            <h1>Welcome back, <span className={styles['text-gradient']}>{user?.name}</span></h1>
+                            <p>Here's what's happening with your service business today.</p>
+                        </div>
+                        <div className={styles['welcome-stats']}>
+                            <div className={styles['stat-pill']}>
+                                <span className={styles['stat-val']}>$2,450</span>
+                                <span className={styles['stat-label']}>This Month</span>
+                            </div>
+                            <div className={styles['stat-pill']}>
+                                <span className={styles['stat-val']}>4.9</span>
+                                <span className={styles['stat-label']}>Rating</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Quick View Dashboard */}
+                    <div className={styles['dashboard-actions-grid']}>
+                        {providerActions.map((card, idx) => (
+                            <div
+                                key={idx}
+                                className={`${styles['action-card-modern']} ${styles['animate-up']}`}
+                                style={{ animationDelay: `${idx * 0.1}s` }}
+                            >
+                                <div className={styles['card-icon-blob']}>{card.icon}</div>
+                                <div className={styles['card-body']}>
+                                    <h3>{card.title}</h3>
+                                    <p>{card.desc}</p>
+                                    <button
+                                        className={styles['btn-card-action']}
+                                        onClick={() => navigate(card.link)}
+                                    >
+                                        {card.btnText}
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Active Jobs Section Removed */}
                 </div>
-            </nav>
+            </main>
 
-            <div className="dashboard-content">
-                <div className="dashboard-header">
-                    <h2>Provider Dashboard</h2>
-                    <p>Manage your services, discounts, and bookings</p>
-                </div>
-
-                <div className="dashboard-grid">
-                    <div className="dashboard-card">
-                        <h3>📋 My Services</h3>
-                        <p>Create and manage your services</p>
-                        <button className="btn-secondary">Manage Services</button>
-                    </div>
-
-                    <div className="dashboard-card">
-                        <h3>🎯 Discounts & Offers</h3>
-                        <p>Create time-based discounts with interest tracking</p>
-                        <button className="btn-secondary">Create Discount</button>
-                    </div>
-
-                    <div className="dashboard-card">
-                        <h3>📅 Availability Calendar</h3>
-                        <p>Set your service availability dates</p>
-                        <button className="btn-secondary">Manage Calendar</button>
-                    </div>
-
-                    <div className="dashboard-card">
-                        <h3>📜 Certifications</h3>
-                        <p>Upload and manage your certifications</p>
-                        <button className="btn-secondary">Upload Certificate</button>
-                    </div>
-
-                    <div className="dashboard-card">
-                        <h3>📊 Bookings</h3>
-                        <p>View and manage service bookings</p>
-                        <button className="btn-secondary">View Bookings</button>
-                    </div>
-
-                    <div className="dashboard-card">
-                        <h3>📈 Performance</h3>
-                        <p>View your response score and insights</p>
-                        <button className="btn-secondary">View Stats</button>
-                    </div>
-                </div>
-            </div>
+            <Footer />
         </div>
     );
 };
