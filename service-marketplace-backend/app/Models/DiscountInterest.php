@@ -9,7 +9,7 @@ class DiscountInterest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['customer_id', 'discount_id', 'is_activate'];
+    protected $fillable = ['customer_id', 'discount_id', 'is_activate', 'cancellation_email_sent', 'promo_code', 'booking_date', 'booking_time', 'booking_status', 'provider_suggested_date', 'provider_suggested_time'];
 
     public function customer()
     {

@@ -28,13 +28,13 @@ const AreaManagement = () => {
                 }
             });
 
-            if (response.data && response.data.success) {
+            if (response.data) {
                 setAreas(response.data.data || []);
                 setPagination({
-                    current_page: response.data.meta.current_page,
-                    last_page: response.data.meta.last_page,
-                    per_page: response.data.meta.per_page,
-                    total: response.data.meta.total
+                    current_page: response.data.current_page,
+                    last_page: response.data.last_page,
+                    per_page: response.data.per_page,
+                    total: response.data.total
                 });
             }
         } catch (error) {

@@ -94,9 +94,20 @@ class User extends Authenticatable
     /**
      * Customer interests in discounts
      */
+    /**
+     * Customer interests in discounts
+     */
     public function interests()
     {
-        return $this->hasMany(CustomerInterest::class, 'customer_id');
+        return $this->hasMany(DiscountInterest::class, 'customer_id');
+    }
+
+    /**
+     * Customer interests in discounts (alias)
+     */
+    public function discountInterests()
+    {
+        return $this->hasMany(DiscountInterest::class, 'customer_id');
     }
 
     /**

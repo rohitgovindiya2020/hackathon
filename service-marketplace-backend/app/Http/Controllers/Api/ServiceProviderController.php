@@ -78,7 +78,7 @@ class ServiceProviderController extends Controller
      */
     public function show(string $id)
     {
-        $provider = ServiceProvider::with(['address', 'services', 'areas', 'media', 'discounts', 'reviews.customer'])->find($id);
+        $provider = ServiceProvider::with(['address', 'services', 'areas', 'media', 'discounts.interests', 'reviews.customer'])->find($id);
         
         if (!$provider) {
             return response()->json([

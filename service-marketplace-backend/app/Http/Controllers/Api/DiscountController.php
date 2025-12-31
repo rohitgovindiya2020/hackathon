@@ -193,4 +193,274 @@ class DiscountController extends Controller
             'data' => $discounts
         ]);
     }
+    /**
+     * Get interested customers for a specific discount.
+     */
+    public function getInterests($id)
+    {
+        $provider = Auth::user();
+
+        if (!$provider instanceof ServiceProvider) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $discount = Discount::where('id', $id)
+            ->where('service_provider_id', $provider->id)
+            ->first();
+
+        if (!$discount) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Discount not found or unauthorized.'
+            ], 404);
+        }
+
+        $interests = \App\Models\DiscountInterest::with('customer')
+            ->where('discount_id', $id)
+            ->get()
+            ->map(function ($interest) {
+                return [
+                    'id' => $interest->id,
+                    'customer_id' => $interest->customer_id,
+                    'customer_name' => $interest->customer->name,
+                    'customer_email' => $interest->customer->email,
+                    'customer_phone' => $interest->customer->mobile_no,
+                    'interest_date' => $interest->created_at->toDateTimeString(),
+                    'is_activate' => $interest->is_activate,
+                ];
+            });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $interests
+        ]);
+    }
+
+    /**
+     * Get details for a specific customer interested in a discount.
+     */
+    public function getCustomerDetails($discountId, $customerId)
+    {
+        $provider = Auth::user();
+
+        if (!$provider instanceof ServiceProvider) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $interest = \App\Models\DiscountInterest::with(['customer', 'discount.service'])
+            ->where('discount_id', $discountId)
+            ->where('customer_id', $customerId)
+            ->first();
+
+        if (!$interest) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Interest record not found.'
+            ], 404);
+        }
+
+        // Verify the discount belongs to this provider
+        if ($interest->discount->service_provider_id !== $provider->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access to this discount.'
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'customer_name' => $interest->customer->name,
+                'customer_email' => $interest->customer->email,
+                'customer_phone' => $interest->customer->mobile_no,
+                'interest_date' => $interest->created_at->toDateTimeString(),
+                'promo_code' => $interest->promo_code,
+                'is_activate' => $interest->is_activate,
+                'service_name' => $interest->discount->service->name,
+                'discount_percentage' => $interest->discount->discount_percentage,
+                'booking_date' => $interest->booking_date,
+                'booking_time' => $interest->booking_time,
+                'booking_status' => $interest->booking_status,
+                'provider_suggested_date' => $interest->provider_suggested_date,
+                'provider_suggested_time' => $interest->provider_suggested_time,
+                'discount_start_date' => $interest->discount->discount_start_date,
+                'discount_end_date' => $interest->discount->discount_end_date,
+            ]
+        ]);
+    }
+
+    /**
+     * Approve a booking slot for a specific customer.
+     */
+    public function approveBooking($discountId, $customerId)
+    {
+        $provider = Auth::user();
+
+        if (!$provider instanceof ServiceProvider) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $interest = \App\Models\DiscountInterest::where('discount_id', $discountId)
+            ->where('customer_id', $customerId)
+            ->first();
+
+        if (!$interest) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Interest record not found.'
+            ], 404);
+        }
+
+        // Verify the discount belongs to this provider
+        $discount = Discount::find($discountId);
+        if ($discount->service_provider_id !== $provider->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access to this discount.'
+            ], 403);
+        }
+
+        $interest->update([
+            'booking_status' => 'approved'
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Booking approved successfully.',
+            'data' => $interest
+        ]);
+    }
+
+    /**
+     * Suggest an alternative booking slot for a specific customer.
+     */
+    public function suggestAlternativeSlot(Request $request, $discountId, $customerId)
+    {
+        $provider = Auth::user();
+
+        if (!$provider instanceof ServiceProvider) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'suggested_date' => 'required|date',
+            'suggested_time' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $interest = \App\Models\DiscountInterest::where('discount_id', $discountId)
+            ->where('customer_id', $customerId)
+            ->first();
+
+        if (!$interest) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Interest record not found.'
+            ], 404);
+        }
+
+        // Verify the discount belongs to this provider
+        $discount = Discount::find($discountId);
+        if ($discount->service_provider_id !== $provider->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access to this discount.'
+            ], 403);
+        }
+
+        // Validate date is within discount range
+        if ($request->suggested_date < $discount->discount_start_date || $request->suggested_date > $discount->discount_end_date) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Suggested date must be within the discount period (' . $discount->discount_start_date . ' to ' . $discount->discount_end_date . ').'
+            ], 422);
+        }
+
+        $interest->update([
+            'provider_suggested_date' => $request->suggested_date,
+            'provider_suggested_time' => $request->suggested_time,
+            'booking_status' => 'suggested'
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Alternative slot suggested successfully.',
+            'data' => $interest
+        ]);
+    }
+
+    /**
+     * Submit a promo code for a specific customer interest.
+     */
+    public function submitPromoCode(Request $request, $discountId, $customerId)
+    {
+        $provider = Auth::user();
+
+        if (!$provider instanceof ServiceProvider) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'promo_code' => 'required|string|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $interest = \App\Models\DiscountInterest::where('discount_id', $discountId)
+            ->where('customer_id', $customerId)
+            ->first();
+
+        if (!$interest) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Interest record not found.'
+            ], 404);
+        }
+
+        // Verify the discount belongs to this provider
+        $discount = Discount::find($discountId);
+        if ($discount->service_provider_id !== $provider->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access to this discount.'
+            ], 403);
+        }
+
+        $interest->update([
+            'promo_code' => $request->promo_code,
+            'is_activate' => true // Automatically activate when promo code is assigned
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Promo code submitted and interest activated successfully.',
+            'data' => $interest
+        ]);
+    }
 }

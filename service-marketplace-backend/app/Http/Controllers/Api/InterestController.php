@@ -58,6 +58,13 @@ class InterestController extends Controller
 
         // Check if discount is valid
         $discount = Discount::findOrFail($request->discount_id);
+
+        // CHECK: If goal already reached or already active, no more interests allowed
+        if ($discount->is_active || $discount->current_interest_count >= $discount->required_interest_count) {
+             return response()->json([
+                'message' => 'This deal has already reached its interest target and is closed for new interests.',
+            ], 422);
+        }
         
         // If discount period ended
         if ($discount->interest_to_date && now()->greaterThan($discount->interest_to_date)) {
@@ -81,8 +88,11 @@ class InterestController extends Controller
         $interest = DiscountInterest::create([
             'customer_id' => $user->id,
             'discount_id' => $request->discount_id,
-            'is_activate' => false // keeping default as per probable logic
         ]);
+
+        // Send confirmation email to customer
+        \Illuminate\Support\Facades\Mail::to($user->email)
+            ->send(new \App\Mail\InterestConfirmation($discount, $user));
 
         // Increment count
         $discount->increment('current_interest_count');
@@ -93,6 +103,35 @@ class InterestController extends Controller
         if ($discount->current_interest_count >= $discount->required_interest_count && 
             $now->between($discount->interest_from_date, $discount->interest_to_date)) {
             $discount->update(['is_active' => true]);
+
+            // NEW: Generate promo codes for all interested customers now that goal is reached
+            $allInterests = \App\Models\DiscountInterest::where('discount_id', $discount->id)->get();
+            foreach ($allInterests as $interestRecord) {
+                if (!$interestRecord->promo_code) {
+                    $interestRecord->update([
+                        'promo_code' => strtoupper(\Illuminate\Support\Str::random(8))
+                    ]);
+                }
+            }
+
+            // Notify all interested customers
+            $interestedCustomers = \App\Models\DiscountInterest::where('discount_id', $discount->id)
+                ->with('customer')
+                ->get()
+                ->pluck('customer');
+
+            foreach ($interestedCustomers as $customer) {
+                if ($customer && $customer->email) {
+                    \Illuminate\Support\Facades\Mail::to($customer->email)
+                        ->send(new \App\Mail\DiscountGoalReached($discount, 'customer', ['name' => $customer->name]));
+                }
+            }
+
+            // Notify Provider
+            if ($discount->provider && $discount->provider->email) {
+                \Illuminate\Support\Facades\Mail::to($discount->provider->email)
+                    ->send(new \App\Mail\DiscountGoalReached($discount, 'provider'));
+            }
         }
 
         return response()->json([
@@ -152,7 +191,9 @@ class InterestController extends Controller
     public function activeCount(Request $request)
     {
         $count = \App\Models\DiscountInterest::where('customer_id', $request->user()->id)
-            ->where('is_activate', 1)
+            ->whereHas('discount', function ($query) {
+                $query->where('is_active', 1);
+            })
             ->count();
 
         return response()->json([

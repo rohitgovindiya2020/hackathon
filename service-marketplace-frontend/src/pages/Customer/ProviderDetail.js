@@ -200,19 +200,14 @@ const ProviderDetail = () => {
                                                                 ></div>
                                                             </div>
                                                             <Link
-                                                                to={`/providers/${provider.id}/service/${service.id}/discount`}
-                                                                className="pd-btn-interest"
+                                                                to={`/providers/${provider.id}/discount/${serviceDiscount.id}`}
+                                                                className={`pd-btn-interest ${(serviceDiscount.is_active || ((serviceDiscount.interests?.length || 0) >= serviceDiscount.required_interest_count)) ? 'goal-reached' : ''}`}
                                                                 style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
                                                             >
-                                                                Join Deal
+                                                                {(serviceDiscount.is_active || ((serviceDiscount.interests?.length || 0) >= serviceDiscount.required_interest_count)) ? 'Goal Reached' : 'Join Deal'}
                                                             </Link>
                                                         </div>
                                                     )}
-
-                                                    <div className="pd-service-footer">
-                                                        <span className="pd-service-price">${service.price || '0'}</span>
-                                                        <button className="pd-btn-add">Select</button>
-                                                    </div>
                                                 </div>
                                             );
                                         }) : <div className="pd-empty">No services listed yet.</div>}

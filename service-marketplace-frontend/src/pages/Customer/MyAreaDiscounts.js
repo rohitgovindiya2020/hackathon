@@ -39,8 +39,8 @@ const MyAreaDiscounts = () => {
         fetchDiscounts();
     }, [selectedLocation]);
 
-    const handleViewDiscount = (discountId, providerId, serviceId) => {
-        navigate(`/providers/${providerId}/service/${serviceId}/discount`);
+    const handleViewDiscount = (discountId, providerId) => {
+        navigate(`/providers/${providerId}/discount/${discountId}`);
     };
 
     return (
@@ -110,7 +110,7 @@ const MyAreaDiscounts = () => {
                                             </div>
                                             <button
                                                 className="btn-view"
-                                                onClick={() => handleViewDiscount(discount.id, discount.service_provider_id, discount.service_id)}
+                                                onClick={() => handleViewDiscount(discount.id, discount.service_provider_id)}
                                             >
                                                 View
                                             </button>
