@@ -1,0 +1,309 @@
+.dashboardPageWrapper {
+    background: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboardMain {
+    flex: 1;
+    padding: 60px 0;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+/* Welcome Banner - Ultra Modern */
+.dashboardWelcomeBanner {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border-radius: 32px;
+    padding: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+}
+
+.dashboardWelcomeBanner::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.welcomeText h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    margin: 0 0 12px 0;
+    letter-spacing: -1.5px;
+}
+
+.textGradient {
+    background: linear-gradient(to right, #ffffff, #e0e7ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcomeText p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.9;
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+.welcomeStats {
+    display: flex;
+    gap: 24px;
+}
+
+.statPill {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    padding: 24px 40px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+    transition: transform 0.3s ease;
+}
+
+.statPill:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.statVal {
+    font-size: 2.22rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+/* Success Banner */
+.successBanner {
+    background: #ecfdf5;
+    border: 1px solid #10b981;
+    color: #065f46;
+    padding: 20px 30px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Actions Grid - Premium Cards */
+.dashboardActionsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+}
+
+.actionCardModern {
+    background: white;
+    border-radius: 28px;
+    padding: 40px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.actionCardModern:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(99, 102, 241, 0.1);
+}
+
+.cardIconBlob {
+    width: 64px;
+    height: 64px;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+}
+
+.actionCardModern:hover .cardIconBlob {
+    background: #6366f1;
+    color: white;
+    transform: rotate(10deg) scale(1.1);
+}
+
+.actionCardModern h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.actionCardModern p {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 32px;
+    font-weight: 500;
+}
+
+.btnCardAction {
+    margin-top: auto;
+    background: transparent;
+    border: 2px solid #f1f5f9;
+    color: #1e293b;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btnCardAction svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+}
+
+.actionCardModern:hover .btnCardAction {
+    background: #f8fafc;
+    border-color: #6366f1;
+    color: #6366f1;
+}
+
+.actionCardModern:hover .btnCardAction svg {
+    transform: translateX(4px);
+}
+
+/* Recent Activity Section */
+.recentActivitySection {
+    margin-top: 60px;
+}
+
+.sectionHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.sectionHeaderRow h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+}
+
+.btnTextOnly {
+    background: transparent;
+    border: none;
+    color: #6366f1;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 8px 16px;
+    border-radius: 12px;
+    transition: background 0.3s ease;
+}
+
+.btnTextOnly:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.activityPlaceholderCard {
+    background: white;
+    border-radius: 28px;
+    padding: 60px;
+    text-align: center;
+    border: 2px dashed #e2e8f0;
+}
+
+.activityPlaceholderCard p {
+    font-size: 1.1rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .dashboardActionsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboardWelcomeBanner {
+        flex-direction: column;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .welcomeText {
+        margin-bottom: 32px;
+    }
+
+    .welcomeStats {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .statPill {
+        flex: 1;
+        min-width: 140px;
+    }
+
+    .welcomeText h1 {
+        font-size: 2.5rem;
+    }
+
+    .dashboardActionsGrid {
+        grid-template-columns: 1fr;
+    }
+}

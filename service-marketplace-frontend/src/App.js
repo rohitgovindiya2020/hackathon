@@ -9,18 +9,24 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import ProviderDashboard from './pages/Provider/Dashboard';
 import ManageServices from './pages/Provider/ManageServices';
 import ManageDiscounts from './pages/Provider/ManageDiscounts';
+import ApprovedDiscounts from './pages/Provider/ApprovedDiscounts';
+import InterestedCustomers from './pages/Provider/InterestedCustomers';
+import CustomerDetails from './pages/Provider/CustomerDetails';
 import CustomerDashboard from './pages/Customer/Dashboard';
+import MyInterests from './pages/Customer/MyInterests';
 import Settings from './pages/Customer/Settings';
 import AdminDashboard from './pages/Admin/Dashboard';
 import AdminLogin from './pages/Admin/AdminLogin';
 import ServiceList from './pages/Customer/ServiceList';
 import ServiceDetail from './pages/Customer/ServiceDetail';
+import ServicesByName from './pages/Customer/ServicesByName';
 import ProviderList from './pages/Customer/ProviderList';
 import ProviderDetail from './pages/Customer/ProviderDetail';
 import ServiceDiscountDetail from './pages/Customer/ServiceDiscountDetail';
 import About from './pages/About/About';
 import Profile from './pages/Profile/Profile';
 import MyAreaDiscounts from './pages/Customer/MyAreaDiscounts';
+import Search from './pages/Customer/Search';
 import NotFound from './pages/NotFound/NotFound';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
@@ -75,6 +81,30 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/provider/approved-discounts"
+                element={
+                  <ProtectedRoute allowedRoles={['provider']}>
+                    <ApprovedDiscounts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/discounts/:id/interests"
+                element={
+                  <ProtectedRoute allowedRoles={['provider']}>
+                    <InterestedCustomers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/discounts/:discountId/customers/:customerId"
+                element={
+                  <ProtectedRoute allowedRoles={['provider']}>
+                    <CustomerDetails />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Protected routes - Customer */}
               <Route
@@ -85,6 +115,15 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/customer/interests"
+                element={
+                  <ProtectedRoute allowedRoles={['customer']}>
+                    <MyInterests />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route
                 path="/customer/settings"
                 element={
@@ -98,6 +137,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['customer']}>
                     <ServiceList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/services/by-name/:serviceName"
+                element={
+                  <ProtectedRoute allowedRoles={['customer']}>
+                    <ServicesByName />
                   </ProtectedRoute>
                 }
               />
@@ -118,7 +165,7 @@ function App() {
                 }
               />
               <Route
-                path="/providers/:providerId/service/:serviceId/discount"
+                path="/providers/:providerId/discount/:discountId"
                 element={
                   <ProtectedRoute allowedRoles={['customer']}>
                     <ServiceDiscountDetail />
@@ -142,6 +189,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              <Route path="/search" element={<Search />} />
 
               {/* Protected routes - Admin */}
               <Route

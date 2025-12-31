@@ -10,6 +10,7 @@ const ManageServices = () => {
     const [myServices, setMyServices] = useState([]);
     const [allServices, setAllServices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [discounts, setDiscounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeTab, setActiveTab] = useState('my'); // 'my' or 'all'
     const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +19,7 @@ const ManageServices = () => {
 
     useEffect(() => {
         fetchMyServices();
+        fetchDiscounts();
     }, []);
 
     useEffect(() => {
@@ -49,6 +51,22 @@ const ManageServices = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const fetchDiscounts = async () => {
+        try {
+            const res = await api.get('/discounts');
+            setDiscounts(res.data.data || []);
+        } catch (error) {
+            console.error('Failed to fetch discounts:', error);
+        }
+    };
+
+    const hasActiveFilledDiscount = (serviceId) => {
+        return discounts.some(discount =>
+            discount.service_id === serviceId &&
+            discount.current_interest_count >= discount.required_interest_count
+        );
     };
 
     const handleAddService = async (serviceId) => {
@@ -181,8 +199,10 @@ const ManageServices = () => {
                                                         <button
                                                             className={`${styles['btn-action']} ${styles['btn-danger']}`}
                                                             onClick={() => handleRemoveService(service.id)}
+                                                            disabled={hasActiveFilledDiscount(service.id)}
+                                                            title={hasActiveFilledDiscount(service.id) ? 'Cannot deactivate: Service has an active discount with filled interest count' : 'Deactivate this service'}
                                                         >
-                                                            Deactivate
+                                                            {hasActiveFilledDiscount(service.id) ? 'Locked' : 'Deactivate'}
                                                         </button>
                                                     ) : (
                                                         <button

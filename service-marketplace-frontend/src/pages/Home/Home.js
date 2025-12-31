@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { Header, Footer } from '../../components/Common';
 import api from '../../services/api';
+
+// Swiper Imports
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 import './Home.css';
 
 const Home = () => {
@@ -10,36 +19,40 @@ const Home = () => {
     const [openFaq, setOpenFaq] = useState(null);
     const [services, setServices] = useState([]);
     const [loadingServices, setLoadingServices] = useState(true);
+    const [providers, setProviders] = useState([]);
+    const [loadingProviders, setLoadingProviders] = useState(true);
+    const { user } = useAuth();
+    const isProvider = user?.role === 'provider';
 
     const slides = [
         {
             id: 1,
-            title: ["Expert Home", "Services"],
-            subtitle: "Premium Excellence",
-            description: "Find the most reliable cleaning, plumbing, and repair services for your home with just a few clicks.",
-            image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&q=80&w=2000",
-            ctaPrimary: "Explore Services",
-            ctaSecondary: "View Portfolio",
+            title: ["Future Of", "Home Services"],
+            subtitle: "Next-Gen Living",
+            description: "Experience the ultimate convenience with AI-powered matching and premium verified professionals for your smart home needs.",
+            image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=2000",
+            ctaPrimary: "Explore Future",
+            ctaSecondary: "Watch Demo",
             link: "/services"
         },
         {
             id: 2,
-            title: ["Your Personal", "Repair Pro"],
-            subtitle: "On-Demand Help",
-            description: "From electrical fixes to full-scale renovations, our verified professionals are here to help.",
-            image: "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?auto=format&fit=crop&q=80&w=2000",
-            ctaPrimary: "Find a Pro",
+            title: ["Elite", "Craftsmanship"],
+            subtitle: "Premium Standard",
+            description: "Elevate your living space with master artisans and certified experts who deliver perfection in every detail.",
+            image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=2000",
+            ctaPrimary: "Find Experts",
             ctaSecondary: "How it Works",
             link: "/providers"
         },
         {
             id: 3,
-            title: ["Beauty & Wellness", "At Home"],
-            subtitle: "Luxury Delivered",
-            description: "Experience premium salon and spa treatments in the comfort of your own home.",
-            image: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&q=80&w=2000",
-            ctaPrimary: "Book Now",
-            ctaSecondary: "Our Services",
+            title: ["Sanctuary", "At Home"],
+            subtitle: "Wellness Delivered",
+            description: "Transform your home into a private wellness retreat with our exclusive selection of beauty and spa services.",
+            image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&q=80&w=2000",
+            ctaPrimary: "Book Luxury",
+            ctaSecondary: "View Menu",
             link: "/services"
         }
     ];
@@ -50,7 +63,8 @@ const Home = () => {
 
     useEffect(() => {
         setIsVisible(true);
-        const timer = setInterval(nextSlide, 7000); // Cinematic timing
+
+        const timer = setInterval(nextSlide, 8000); // Slower for premium feel
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -60,7 +74,6 @@ const Home = () => {
             });
         }, { threshold: 0.1 });
 
-        // Observe elements, including those that might have been added dynamically
         setTimeout(() => {
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }, 100);
@@ -69,11 +82,29 @@ const Home = () => {
             clearInterval(timer);
             observer.disconnect();
         };
-    }, [nextSlide, services]); // Re-run when services change
+    }, [nextSlide, services]);
 
     useEffect(() => {
         fetchServices();
+        fetchProviders();
     }, []);
+
+    const fetchProviders = async () => {
+        setLoadingProviders(true);
+        try {
+            const response = await api.get('/providers', {
+                params: { per_page: 4 }
+            });
+            const providersData = Array.isArray(response.data.data)
+                ? response.data.data
+                : (response.data.data?.data || []);
+            setProviders(providersData);
+        } catch (error) {
+            console.error('Error fetching providers:', error);
+        } finally {
+            setLoadingProviders(false);
+        }
+    };
 
     const fetchServices = async () => {
         setLoadingServices(true);
@@ -92,27 +123,6 @@ const Home = () => {
         }
     };
 
-    const categories = [
-        { id: 1, name: 'Cleaning', icon: '🧹', count: '120+ Jobs', color: '#e0f2fe' },
-        { id: 2, name: 'Plumbing', icon: '🔧', count: '80+ Jobs', color: '#fef3c7' },
-        { id: 3, name: 'Electrical', icon: '⚡', count: '95+ Jobs', color: '#ffedd5' },
-        { id: 4, name: 'Painting', icon: '🎨', count: '60+ Jobs', color: '#f3e8ff' },
-        { id: 5, name: 'Carpentry', icon: '🪚', count: '45+ Jobs', color: '#dcfce7' },
-        { id: 6, name: 'Gardening', icon: '🌿', count: '30+ Jobs', color: '#ecfdf5' },
-    ];
-
-    const popularServices = [
-        { id: 1, title: 'Deep Home Cleaning', provider: 'Shiny Homes Co.', rating: 4.8, price: '$80', image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=400', tag: 'POPULAR' },
-        { id: 2, title: 'Emergency Plumbing', provider: 'Quick Fix Plumbers', rating: 4.9, price: '$120', image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&q=80&w=400', tag: 'EMERGENCY' },
-        { id: 3, title: 'Full House Painting', provider: 'Artisan Decorators', rating: 4.7, price: '$450', image: 'https://images.unsplash.com/photo-1589939705384-5185138a0470?auto=format&fit=crop&q=80&w=400', tag: 'TOP RATED' },
-    ];
-
-    const featuredProviders = [
-        { id: 1, name: 'Marco Rossi', role: 'Master Electrician', rating: 4.9, jobs: 450, reviews: 320, responseTime: '15 min', image: 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&q=80&w=150', isPro: true },
-        { id: 2, name: 'Elena Gilbert', role: 'Interior Designer', rating: 4.8, jobs: 320, reviews: 210, responseTime: '45 min', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150', isPro: true },
-        { id: 3, name: 'John Wick', role: 'Security Expert', rating: 5.0, jobs: 890, reviews: 750, responseTime: '5 min', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150', isPro: true },
-        { id: 4, name: 'Sarah Connor', role: 'Smart Home Specialist', rating: 4.9, jobs: 210, reviews: 180, responseTime: '30 min', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150', isPro: false },
-    ];
 
     const stats = [
         { label: 'Happy Customers', value: '50k+', icon: '😊' },
@@ -133,159 +143,191 @@ const Home = () => {
             <Header />
 
             <main className="home-content">
-                {/* Geometric Narrative Hero */}
-                <section className="hero-geometric">
-                    <div className="mesh-gradient-bg"></div>
-                    <div className="floating-particles"></div>
+                {/* Premium Hero Slider */}
+                <section className="hero-premium-slider">
+                    <div className="slider-background-layer"></div>
 
-                    <div className="container">
-                        <div className="hero-split-narrative">
-                            <div className="narrative-content-column">
-                                <div className="hero-perspective-card">
-                                    {slides.map((slide, idx) => (
-                                        <div
-                                            key={slide.id}
-                                            className={`narrative-frame ${idx === currentSlide ? 'active' : ''}`}
-                                        >
-                                            <div className="narrative-meta">
-                                                <span className="narrative-badge">{slide.subtitle}</span>
-                                                <div className="meta-line"></div>
-                                            </div>
-                                            <h1 className="narrative-title">
-                                                <span>{slide.title[0]}</span>
-                                                <span className="text-gradient">{slide.title[1]}</span>
+                    <div className="slider-container">
+                        {slides.map((slide, idx) => (
+                            <div
+                                key={slide.id}
+                                className={`slide-panel ${idx === currentSlide ? 'active' : ''} ${idx < currentSlide ? 'prev' : ''}`}
+                            >
+                                <div className="slide-image-wrapper">
+                                    <div
+                                        className="slide-bg-image"
+                                        style={{ backgroundImage: `url(${slide.image})` }}
+                                    ></div>
+                                    <div className="image-overlay"></div>
+                                </div>
+
+                                <div className="container">
+                                    <div className="slide-content">
+                                        <div className="content-wrapper">
+                                            <span className="slide-badge">{slide.subtitle}</span>
+                                            <h1 className="slide-title">
+                                                {slide.title[0]}
+                                                <span className="title-highlight">{slide.title[1]}</span>
                                             </h1>
-                                            <p className="narrative-description">{slide.description}</p>
+                                            <p className="slide-description">{slide.description}</p>
 
-                                            <div className="narrative-actions">
-                                                <Link to={slide.link} className="btn-narrative-primary">
+                                            <div className="slide-actions">
+                                                <Link to={slide.link} className="btn-primary-elegant">
                                                     <span>{slide.ctaPrimary}</span>
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M5 12h14M12 5l7 7-7 7" />
+                                                    </svg>
                                                 </Link>
-                                                <Link to="/about" className="btn-narrative-secondary">
+                                                <Link to="/about" className="btn-secondary-elegant">
                                                     {slide.ctaSecondary}
                                                 </Link>
                                             </div>
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
+                            </div>
+                        ))}
+                    </div>
 
-                                <div className="vertical-sequence-nav">
+                    {/* Slider Controls */}
+                    <div className="slider-controls">
+                        <div className="container">
+                            <div className="controls-wrapper">
+                                <button
+                                    className="nav-arrow nav-prev"
+                                    onClick={() => setCurrentSlide(prev => prev === 0 ? slides.length - 1 : prev - 1)}
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                <div className="slide-indicators">
                                     {slides.map((_, idx) => (
                                         <button
                                             key={idx}
-                                            className={`sequence-item ${idx === currentSlide ? 'active' : ''}`}
+                                            className={`indicator ${idx === currentSlide ? 'active' : ''}`}
                                             onClick={() => setCurrentSlide(idx)}
                                         >
-                                            <span className="sequence-number">{idx + 1}</span>
-                                            <div className="sequence-indicator">
-                                                <div className="indicator-fill"></div>
+                                            <span className="indicator-number">0{idx + 1}</span>
+                                            <div className="indicator-bar">
+                                                <div className="bar-fill"></div>
                                             </div>
                                         </button>
                                     ))}
                                 </div>
-                            </div>
 
-                            <div className="visual-prism-column">
-                                <div className="media-prism-stack">
-                                    {slides.map((slide, idx) => (
-                                        <div
-                                            key={slide.id}
-                                            className={`prism-layer ${idx === currentSlide ? 'active' : ''}`}
-                                            style={{
-                                                '--layer-index': idx,
-                                                '--total-layers': slides.length,
-                                                backgroundImage: `url(${slide.image})`
-                                            }}
-                                        >
-                                            <div className="prism-glass-overlay"></div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="prism-decorative-elements">
-                                    <div className="prism-ring"></div>
-                                    <div className="prism-dot"></div>
-                                </div>
+                                <button
+                                    className="nav-arrow nav-next"
+                                    onClick={() => setCurrentSlide(prev => prev === slides.length - 1 ? 0 : prev + 1)}
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M5 12h14M12 5l7 7-7 7" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="hero-scroll-guide">
-                        <div className="scroll-bar">
-                            <div className="scroll-fill"></div>
-                        </div>
-                        <span className="scroll-label">DISCOVER</span>
                     </div>
                 </section>
 
-
-
-                {/* Featured Services Section */}
-                <section className="categories-section section-padding bg-light">
-                    <div className="container">
-                        <div className="section-header reveal">
-                            <span className="section-overline">Platform Offerings</span>
-                            <h2>Featured <span className="text-gradient">Services</span></h2>
-                            <p>Discover professional solutions powered by our expert community.</p>
-                        </div>
-
-                        {loadingServices ? (
-                            <div className="services-loading">
-                                <div className="spinner-premium"></div>
-                                <span>Curating best services...</span>
+                {/* Featured Services Section - Hidden for Providers */}
+                {!isProvider && (
+                    <section className="categories-section section-padding bg-light">
+                        <div className="container">
+                            <div className="section-header-row reveal">
+                                <div className="section-header text-left">
+                                    <span className="section-overline">Platform Offerings</span>
+                                    <h2>Featured <span className="text-gradient">Services</span></h2>
+                                    <p>Discover professional solutions powered by our expert community.</p>
+                                </div>
+                                <div className="slider-nav-btns">
+                                    <button className="nav-btn prev-service">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+                                    </button>
+                                    <button className="nav-btn next-service">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+                                    </button>
+                                </div>
                             </div>
-                        ) : (
-                            <div className="categories-grid">
-                                {services.map((service, idx) => (
-                                    <div
-                                        key={service.id}
-                                        className="service-card-modern reveal"
-                                        style={{ animationDelay: `${idx * 0.1}s` }}
+
+                            {loadingServices ? (
+                                <div className="services-loading">
+                                    <div className="spinner-premium"></div>
+                                    <span>Curating best services...</span>
+                                </div>
+                            ) : (
+                                <div className="services-slider-viewport">
+                                    <Swiper
+                                        modules={[Navigation, Pagination, Autoplay]}
+                                        spaceBetween={30}
+                                        slidesPerView={1}
+                                        navigation={{
+                                            prevEl: '.prev-service',
+                                            nextEl: '.next-service',
+                                        }}
+                                        pagination={{ clickable: true }}
+                                        autoplay={{ delay: 5000, disableOnInteraction: false }}
+                                        breakpoints={{
+                                            768: { slidesPerView: 2 },
+                                            1200: { slidesPerView: 3 },
+                                        }}
+                                        className="services-swiper"
                                     >
-                                        <div className="service-visual-area">
-                                            <img
-                                                src={service.image || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=600'}
-                                                alt={service.name}
-                                                className="service-hero-img"
-                                            />
-                                            <div className="service-glass-overlay"></div>
-                                            <div className="service-badges-top">
-                                                <span className="badge-live">LIVE</span>
-                                                <span className="badge-category">{typeof service.category === 'object' ? service.category?.name : service.category || 'General'}</span>
-                                            </div>
-                                            <button className="btn-wishlist-glass">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
-                                            </button>
-                                        </div>
-                                        <div className="service-details-area">
-                                            <div className="service-meta-info">
-                                                <div className="meta-rating">
-                                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                                    <span>{service.rating || '4.9'}</span>
+                                        {services.map((service, idx) => (
+                                            <SwiperSlide key={service.id}>
+                                                <div
+                                                    className="service-card-modern reveal"
+                                                    style={{ animationDelay: `${idx * 0.1}s` }}
+                                                >
+                                                    <div className="service-visual-area">
+                                                        <img
+                                                            src={service.image || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=600'}
+                                                            alt={service.name}
+                                                            className="service-hero-img"
+                                                        />
+                                                        <div className="service-glass-overlay"></div>
+                                                        <div className="service-badges-top">
+                                                            <span className="badge-live">LIVE</span>
+                                                            <span className="badge-category">{typeof service.category === 'object' ? service.category?.name : service.category || 'General'}</span>
+                                                        </div>
+                                                        <button className="btn-wishlist-glass">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
+                                                        </button>
+                                                    </div>
+                                                    <div className="service-details-area">
+                                                        <div className="service-meta-info">
+                                                            <div className="meta-rating">
+                                                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+                                                                <span>{service.rating || '4.9'}</span>
+                                                            </div>
+                                                            <span className="meta-verified">● Verified</span>
+                                                        </div>
+                                                        <h3 className="service-title-modern">{service.name}</h3>
+                                                        <div className="service-price-row-modern">
+                                                            <Link to={`/services/${service.id}`} className="btn-book-cinematic">
+                                                                <span>Reserve</span>
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                                            </Link>
+                                                            <Link to={`/services/by-name/${encodeURIComponent(service.name)}`} className="btn-view-all-providers">
+                                                                <span>All Pros</span>
+                                                            </Link>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <span className="meta-verified">● Verified</span>
-                                            </div>
-                                            <h3 className="service-title-modern">{service.name}</h3>
-                                            <div className="service-price-row-modern">
-                                                <Link to={`/services/${service.id}`} className="btn-book-cinematic">
-                                                    <span>Reserve</span>
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                </div>
+                            )}
+                            <div className="section-actions-center reveal" style={{ marginTop: '3rem' }}>
+                                <Link to="/services" className="btn-explore-all">
+                                    <span>Explore All Services</span>
+                                    <div className="btn-glow-ring"></div>
+                                </Link>
                             </div>
-                        )}
-                        <div className="section-actions-center reveal">
-                            <Link to="/services" className="btn-explore-all">
-                                <span>Explore All Services</span>
-                                <div className="btn-glow-ring"></div>
-                            </Link>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                )}
 
                 {/* How it Works Section */}
                 < section className="how-it-works section-padding" >
@@ -301,8 +343,8 @@ const Home = () => {
                                     <div className="step-number">01</div>
                                     <div className="step-blob"></div>
                                 </div>
-                                <h3>Find a Service</h3>
-                                <p>Choose from our wide range of premium services.</p>
+                                <h3>Discover Deals</h3>
+                                <p>Browse premium services and find exclusive goal-based discounts in your area.</p>
                             </div>
                             <div className="step-line reveal"></div>
                             <div className="step-item reveal">
@@ -310,8 +352,8 @@ const Home = () => {
                                     <div className="step-number">02</div>
                                     <div className="step-blob second"></div>
                                 </div>
-                                <h3>Choose Provider</h3>
-                                <p>Pick the best professional based on reviews and price.</p>
+                                <h3>Join Interest</h3>
+                                <p>Show interest in a deal to help reach the customer goal and unlock massive savings.</p>
                             </div>
                             <div className="step-line reveal"></div>
                             <div className="step-item reveal">
@@ -319,133 +361,114 @@ const Home = () => {
                                     <div className="step-number">03</div>
                                     <div className="step-blob third"></div>
                                 </div>
-                                <h3>Book & Relax</h3>
-                                <p>Schedule a time and let us handle the rest.</p>
+                                <h3>Unlock Coupon</h3>
+                                <p>Once the interest goal is reached, receive your unique coupon code instantly.</p>
+                            </div>
+                            <div className="step-line reveal"></div>
+                            <div className="step-item reveal">
+                                <div className="step-number-container">
+                                    <div className="step-number">04</div>
+                                    <div className="step-blob second"></div> {/* Reusing second blob style for variety */}
+                                </div>
+                                <h3>Book & Save</h3>
+                                <p>Coordinate your preferred slot with the provider and enjoy the service at a discount.</p>
                             </div>
                         </div>
                     </div>
                 </section >
 
-                {/* Featured Services */}
-                < section className="featured-section section-padding bg-light" >
-                    <div className="container">
-                        <div className="section-header reveal">
-                            <span className="section-overline">Top Picked</span>
-                            <h2>Popular <span className="text-gradient">Services</span></h2>
-                            <p>Hand-picked services from our most trusted and highly-rated providers.</p>
-                        </div>
-
-                        <div className="services-grid">
-                            {popularServices.map((service, idx) => (
-                                <div
-                                    key={service.id}
-                                    className="service-card-modern reveal"
-                                    style={{ animationDelay: `${idx * 0.15}s` }}
-                                >
-                                    <div className="service-visual-area">
-                                        <img src={service.image} alt={service.title} className="service-hero-img" />
-                                        <div className="service-glass-overlay"></div>
-                                        <div className="service-badges-top">
-                                            <span className="badge-tag">{service.tag}</span>
-                                        </div>
-                                        <button className="btn-wishlist-glass">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
-                                        </button>
-                                    </div>
-                                    <div className="service-details-area">
-                                        <div className="service-meta-info">
-                                            <div className="meta-rating">
-                                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
-                                                <span>{service.rating}</span>
-                                            </div>
-                                            <span className="meta-verified">● Premium</span>
-                                        </div>
-                                        <h3 className="service-title-modern">{service.title}</h3>
-                                        <p className="service-provider-line">by <strong>{service.provider}</strong></p>
-                                        <div className="service-price-row-modern">
-                                            <div className="price-label-group">
-                                                <span className="start-at">Investment</span>
-                                                <span className="price-amount">{service.price}</span>
-                                            </div>
-                                            <Link to={`/services/${service.id}`} className="btn-book-cinematic">
-                                                <span>View</span>
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section >
-
                 {/* Top Rated Providers */}
-                < section className="providers-section section-padding" >
+                <section className="providers-section section-padding">
                     <div className="container">
                         <div className="section-header reveal">
                             <span className="section-overline">Elite Talent</span>
-                            <h2>Expert <span className="text-gradient">Partners</span></h2>
+                            <h2>Top Service <span className="text-gradient">Providers</span></h2>
                             <p>Connect with our most highly rated and background-verified professionals.</p>
                         </div>
-                        <div className="providers-grid">
-                            {featuredProviders.map((pro, idx) => (
-                                <div key={pro.id} className="provider-card-modern reveal" style={{ animationDelay: `${idx * 0.1}s` }}>
-                                    <div className="pro-card-header">
-                                        {pro.isPro && <span className="elite-badge">ELITE PRO</span>}
-                                        <div className="pro-actions">
-                                            <button className="pro-action-btn favorite">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <div className="pro-main-info">
-                                        <div className="pro-avatar-wrapper">
-                                            <div className="pro-avatar-ring"></div>
-                                            <img src={pro.image} alt={pro.name} className="pro-avatar-img" />
-                                            <div className="pro-status-pulse"></div>
-                                        </div>
-                                        <h3>{pro.name}</h3>
-                                        <span className="pro-role-tag">{pro.role}</span>
-                                    </div>
+                        {loadingProviders ? (
+                            <div className="services-loading">
+                                <div className="spinner-premium"></div>
+                                <span>Discovering experts...</span>
+                            </div>
+                        ) : (
+                            <div className="providers-grid">
+                                {providers.map((pro, idx) => {
+                                    const avgRating = pro.reviews?.length > 0
+                                        ? (pro.reviews.reduce((acc, r) => acc + r.rating, 0) / pro.reviews.length).toFixed(1)
+                                        : 4.9;
 
-                                    <div className="pro-rating-row">
-                                        <div className="pro-stars">
-                                            {[...Array(5)].map((_, i) => (
-                                                <svg key={i} className={i < Math.floor(pro.rating) ? 'star-filled' : 'star-empty'} viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                                </svg>
-                                            ))}
-                                        </div>
-                                        <span className="rating-count">({pro.reviews} reviews)</span>
-                                    </div>
+                                    return (
+                                        <div key={pro.id} className="provider-card-modern reveal" style={{ animationDelay: `${idx * 0.1}s` }}>
+                                            <div className="pro-card-header">
+                                                {pro.status === 1 && <span className="elite-badge">VERIFIED</span>}
+                                                <div className="pro-actions">
+                                                    <button className="pro-action-btn favorite">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
+                                                    </button>
+                                                </div>
+                                            </div>
 
-                                    <div className="pro-meta-grid">
-                                        <div className="meta-item">
-                                            <span className="meta-label">Total Jobs</span>
-                                            <span className="meta-value">{pro.jobs}+</span>
-                                        </div>
-                                        <div className="meta-divider"></div>
-                                        <div className="meta-item">
-                                            <span className="meta-label">Response</span>
-                                            <span className="meta-value">{pro.responseTime}</span>
-                                        </div>
-                                    </div>
+                                            <div className="pro-main-info">
+                                                <div className="pro-avatar-wrapper">
+                                                    <div className="pro-avatar-ring"></div>
+                                                    <img
+                                                        src={pro.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(pro.name)}&background=random`}
+                                                        alt={pro.name}
+                                                        className="pro-avatar-img"
+                                                    />
+                                                    <div className="pro-status-pulse"></div>
+                                                </div>
+                                                <h3>{pro.name}</h3>
+                                                <span className="pro-role-tag">{pro.services?.[0]?.name || 'Service Professional'}</span>
+                                            </div>
 
-                                    <div className="pro-card-footer">
-                                        <button className="btn-message-pro">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" /></svg>
-                                        </button>
-                                        <Link to={`/providers/${pro.id}`} className="btn-view-pro-profile">
-                                            <span>View Profile</span>
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
+                                            <div className="pro-rating-row">
+                                                <div className="pro-stars">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <svg key={i} className={i < Math.floor(avgRating) ? 'star-filled' : 'star-empty'} viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                                        </svg>
+                                                    ))}
+                                                </div>
+                                                <span className="rating-count">({pro.reviews?.length || 0} reviews)</span>
+                                            </div>
+
+                                            <div className="pro-meta-grid">
+                                                <div className="meta-item">
+                                                    <span className="meta-label">Services</span>
+                                                    <span className="meta-value">{pro.services?.length || 0}</span>
+                                                </div>
+                                                <div className="meta-divider"></div>
+                                                <div className="meta-item">
+                                                    <span className="meta-label">Location</span>
+                                                    <span className="meta-value">{pro.address?.city || 'Local Area'}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="pro-card-footer">
+                                                <button className="btn-message-pro">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" /></svg>
+                                                </button>
+                                                <Link to={`/providers/${pro.id}`} className="btn-view-pro-profile">
+                                                    <span>View Profile</span>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        <div className="section-actions-center reveal" style={{ marginTop: '4rem' }}>
+                            <Link to="/providers" className="btn-explore-all">
+                                <span>Browse All Professionals</span>
+                                <div className="btn-glow-ring"></div>
+                            </Link>
                         </div>
                     </div>
-                </section >
+                </section>
 
                 {/* Experience Quality Section */}
                 < section className="experience-section section-padding bg-gradient-dark" >
@@ -482,7 +505,7 @@ const Home = () => {
                             </div>
                             <div className="experience-image-modern">
                                 <div className="image-stack-wrapper">
-                                    <img src="https://images.unsplash.com/photo-1454165833767-027ffea9e77b?auto=format&fit=crop&q=80&w=800" alt="Quality" className="main-exp-img" />
+                                    <img src="/assets/experience-quality.png" alt="Quality" className="main-exp-img" />
                                     <div className="floating-exp-card reveal">
                                         <div className="exp-icon-box">🏆</div>
                                         <div className="exp-info">

@@ -11,6 +11,50 @@ use Illuminate\Support\Facades\Validator;
 class ServiceController extends Controller
 {
     /**
+     * Get discounts by service name.
+     */
+    public function getByName(Request $request)
+    {
+        $name = $request->query('name');
+        
+        // Find exact match first
+        $service = Service::where('name', $name)->first();
+
+        // Fallback to like search if no exact match
+        if (!$service) {
+            $service = Service::where('name', 'LIKE', "%{$name}%")->first();
+        }
+
+        if (!$service) {
+            return response()->json([
+                'status' => 'success',
+                'data' => []
+            ]);
+        }
+
+        // Fetch discounts for this service
+        $discounts = \App\Models\Discount::where('service_id', $service->id)
+            ->where('discount_end_date', '>=', now())
+            ->get();
+
+        // Transform discounts to include service info
+        $discountOffers = $discounts->map(function($discount) use ($service) {
+            $offer = $discount->toArray();
+            
+            // Ensure service info is included
+            $offer['service_name'] = $service->name;
+            $offer['service_image'] = $service->image;
+            
+            return $offer;
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $discountOffers
+        ]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)

@@ -1,0 +1,330 @@
+.providersPageWrapper {
+    background: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.providersContent {
+    flex: 1;
+}
+
+/* Hero Section - Cinematic */
+.providersHero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 100px 0 160px;
+    position: relative;
+    overflow: hidden;
+}
+
+.providersHero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, #f8fafc);
+}
+
+.providersHero::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.heroInner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.heroInner h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 24px;
+    letter-spacing: -2px;
+}
+
+.textGradient {
+    background: linear-gradient(to right, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.heroInner p {
+    font-size: 1.4rem;
+    color: #94a3b8;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Main Content Area */
+.providersMain {
+    margin-top: -80px;
+    position: relative;
+    z-index: 3;
+    padding-bottom: 100px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+/* Filter Bar - Modern & Integrated */
+.filterBarModern {
+    background: white;
+    border-radius: 24px;
+    padding: 24px 40px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+    margin-bottom: 60px;
+    display: flex;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.searchInputWrapper {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchInputWrapper svg {
+    position: absolute;
+    left: 20px;
+    color: #94a3b8;
+    width: 20px;
+    height: 20px;
+}
+
+.searchInputWrapper input {
+    width: 100%;
+    padding: 16px 24px 16px 60px;
+    background: #f1f5f9;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.searchInputWrapper input:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* Grid Layout */
+.providersGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+/* Provider Card - Premium Glassmorphism */
+.providerCardPremium {
+    background: white;
+    border-radius: 32px;
+    overflow: hidden;
+    border: 1px solid #f1f5f9;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.providerCardPremium:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+    border-color: rgba(99, 102, 241, 0.1);
+}
+
+.cardMedia {
+    height: 260px;
+    position: relative;
+    overflow: hidden;
+}
+
+.cardMedia img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.providerCardPremium:hover .cardMedia img {
+    transform: scale(1.1);
+}
+
+.cardBody {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.cardMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.listingType {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ratingPill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fffbeb;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1px solid #fef3c7;
+}
+
+.ratingPill svg {
+    color: #f59e0b;
+    width: 16px;
+    height: 16px;
+}
+
+.ratingPill span {
+    font-weight: 900;
+    color: #92400e;
+    font-size: 0.9rem;
+}
+
+.ratingPill small {
+    color: #b45309;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.providerCompany {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.cardFooterAction {
+    margin-top: auto;
+}
+
+.btnViewProfile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    background: #f8fafc;
+    color: #1e293b;
+    text-decoration: none;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.providerCardPremium:hover .btnViewProfile {
+    background: #6366f1;
+    color: white;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+/* Loading State */
+.loadingState {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #f1f5f9;
+    border-top: 5px solid #6366f1;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    animation: spin 1s linear infinite;
+}
+
+.loadingState p {
+    font-size: 1.2rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+    .providersGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .heroInner h1 {
+        font-size: 3rem;
+    }
+
+    .heroInner p {
+        font-size: 1.1rem;
+    }
+
+    .providersGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .filterBarModern {
+        padding: 20px;
+    }
+
+    .container {
+        padding: 0 24px;
+    }
+}

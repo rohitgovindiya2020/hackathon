@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Header, Footer } from '../../components/Common';
 import api from '../../services/api';
-import '../Dashboard.css';
+import styles from './Dashboard.module.css';
 
 const CustomerDashboard = () => {
     const { user } = useAuth();
@@ -27,72 +27,74 @@ const CustomerDashboard = () => {
     };
 
     const dashboardCards = [
-        { title: 'Search Services', desc: 'Find expert help in your area', icon: '🔍', link: '/services', btnText: 'Browse Now' },
-        // { title: 'My Bookings', desc: 'Manage your active service requests', icon: '📅', link: '/customer/bookings', btnText: 'View All' },
-        { title: 'My Interests', desc: 'Track special offers and discounts', icon: '⭐', link: '/customer/interests', btnText: 'Check Offers' },
-        // { title: 'Promo Codes', desc: 'Active coupons for your next job', icon: '🎟️', link: '/customer/promos', btnText: 'My Wallet' },
-        { title: 'Service History', desc: 'Review past completed tasks', icon: '📜', link: '/customer/history', btnText: 'View History' },
-        // { title: 'Preferences', desc: 'Customize your service experience', icon: '⚙️', link: '/customer/settings', btnText: 'Edit Profile' }
+        { title: 'Search Services', desc: 'Find expert help in your area from top-rated pros', icon: '🔍', link: '/services', btnText: 'Browse Now' },
+        { title: 'My Interests', desc: 'Track special offers and curated service discounts', icon: '⭐', link: '/customer/interests', btnText: 'Check Offers' },
+        { title: 'Service History', desc: 'Review and manage your past completed tasks', icon: '📜', link: '/customer/history', btnText: 'View History' },
     ];
 
     return (
-        <div className="dashboard-page-wrapper">
+        <div className={styles.dashboardPageWrapper}>
             <Header />
 
-            <main className="dashboard-main section-padding">
-                <div className="container">
+            <main className={styles.dashboardMain}>
+                <div className={styles.container}>
                     {/* Welcome Header */}
-                    <div className="dashboard-welcome-banner animate-up">
-                        <div className="welcome-text">
-                            <h1>Hello, <span className="text-gradient">{user?.name}</span>!</h1>
-                            <p>Manage your home services and track your bookings in one place.</p>
+                    <div className={styles.dashboardWelcomeBanner}>
+                        <div className={styles.welcomeText}>
+                            <h1>Hello, <span className={styles.textGradient}>{user?.name}</span>!</h1>
+                            <p>Manage your home services, track bookings, and discover exclusive local deals in one place.</p>
                         </div>
-                        <div className="welcome-stats">
-                            <div className="stat-pill">
-                                <span className="stat-val">{activeInterests}</span>
-                                <span className="stat-label">Active Interests</span>
+                        <div className={styles.welcomeStats}>
+                            <div className={styles.statPill}>
+                                <span className={styles.statVal}>{activeInterests}</span>
+                                <span className={styles.statLabel}>Active Interests</span>
                             </div>
                         </div>
                     </div>
 
                     {location.state?.bookingSuccess && (
-                        <div className="success-banner animate-up">
-                            <span>🎉 Your booking has been confirmed successfully!</span>
+                        <div className={styles.successBanner}>
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" style={{ color: '#10b981' }}>
+                                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <span>Your booking has been confirmed successfully!</span>
                         </div>
                     )}
 
                     {/* Quick Actions Grid */}
-                    <div className="dashboard-actions-grid">
+                    <div className={styles.dashboardActionsGrid}>
                         {dashboardCards.map((card, idx) => (
                             <div
                                 key={idx}
-                                className="action-card-modern animate-up"
+                                className={styles.actionCardModern}
                                 style={{ animationDelay: `${idx * 0.1}s` }}
                             >
-                                <div className="card-icon-blob">{card.icon}</div>
-                                <div className="card-body">
+                                <div className={styles.cardIconBlob}>{card.icon}</div>
+                                <div className={styles.cardBody}>
                                     <h3>{card.title}</h3>
                                     <p>{card.desc}</p>
                                     <button
-                                        className="btn-card-action"
+                                        className={styles.btnCardAction}
                                         onClick={() => navigate(card.link)}
                                     >
                                         {card.btnText}
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    {/* Recent Bookings Section (Placeholder) */}
-                    <div className="recent-activity-section reveal section-mt">
-                        <div className="section-header-row">
+                    {/* Recent Activity Section */}
+                    <div className={styles.recentActivitySection}>
+                        <div className={styles.sectionHeaderRow}>
                             <h2>Recent Activity</h2>
-                            <button className="btn-text-only">View All Activity</button>
+                            <button className={styles.btnTextOnly}>View All Activity</button>
                         </div>
-                        <div className="activity-placeholder-card">
-                            <p>Stay tuned! Your latest activity and updates will appear here.</p>
+                        <div className={styles.activityPlaceholderCard}>
+                            <p>Stay tuned! Your latest activity and updates will appear here as you book services.</p>
                         </div>
                     </div>
                 </div>

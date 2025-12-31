@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class ServiceAreaController extends Controller
 {
+    public function index()
+    {
+        $serviceAreas = \App\Models\ServiceArea::paginate(10);
+        return response()->json($serviceAreas);
+    }
+
     public function getCountries()
     {
         $countries = DB::table('service_areas')->distinct()->pluck('country');

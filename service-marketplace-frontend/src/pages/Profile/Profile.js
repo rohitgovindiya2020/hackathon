@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import './Profile.css';
+import styles from './Profile.module.css';
 import { toast } from 'react-hot-toast';
 import {
     FiEdit2, FiUser, FiMapPin, FiBriefcase, FiGrid,
@@ -169,7 +169,7 @@ const Profile = () => {
 
     if (loading) {
         return (
-            <div className="profile-page-wrapper">
+            <div className={styles.profilePageWrapper}>
                 <Header />
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                     <div className="loading-spinner">Loading...</div>
@@ -184,49 +184,49 @@ const Profile = () => {
     const isProvider = user.role === 'provider';
 
     return (
-        <div className="profile-page-wrapper">
+        <div className={styles.profilePageWrapper}>
             <Header />
-            <div className="profile-content-container">
+            <div className={styles.profileContentContainer}>
 
                 {/* Hero Section */}
-                <div className="profile-hero">
-                    <div className="hero-cover"></div>
-                    <div className="hero-content">
-                        <div className="profile-avatar-wrapper">
+                <div className={styles.profileHero}>
+                    <div className={styles.heroCover}></div>
+                    <div className={styles.heroContent}>
+                        <div className={styles.profileAvatarWrapper}>
                             {user.profile_image ? (
-                                <img src={user.profile_image} alt={user.name} className="profile-avatar" />
+                                <img src={user.profile_image} alt={user.name} className={styles.profileAvatar} />
                             ) : (
-                                <div className="avatar-placeholder">
+                                <div className={styles.avatarPlaceholder}>
                                     {user.name.charAt(0).toUpperCase()}
                                 </div>
                             )}
-                            <button className="edit-avatar-btn" title="Change Avatar">
-                                <FiCamera size={18} />
+                            <button className={styles.editAvatarBtn} title="Change Avatar">
+                                <FiCamera size={20} />
                             </button>
                         </div>
 
-                        <div className="profile-main-info">
-                            <h1 className="profile-name">
+                        <div className={styles.profileMainInfo}>
+                            <h1 className={styles.profileName}>
                                 {user.name}
-                                <span className="role-badge">{isProvider ? 'Provider' : 'Customer'}</span>
+                                <span className={styles.roleBadge}>{isProvider ? 'Provider' : 'Customer'}</span>
                             </h1>
-                            <div className="profile-contact">
-                                <span className="contact-item"><FiMail /> {user.email}</span>
-                                <span className="contact-item"><FiCalendar /> Joined {new Date(user.created_at).toLocaleDateString()}</span>
-                                {user.mobile_no && <span className="contact-item"><FiPhone /> {user.mobile_no}</span>}
+                            <div className={styles.profileContact}>
+                                <span className={styles.contactItem}><FiMail size={18} /> {user.email}</span>
+                                <span className={styles.contactItem}><FiCalendar size={18} /> Joined {new Date(user.created_at).toLocaleDateString()}</span>
+                                {user.mobile_no && <span className={styles.contactItem}><FiPhone size={18} /> {user.mobile_no}</span>}
                             </div>
                         </div>
 
                         {/* Stats for Provider */}
                         {isProvider && (
-                            <div className="profile-stats">
-                                <div className="stat">
-                                    <span className="stat-value">{user.average_rating || 0}</span>
-                                    <span className="stat-label"><FiStar style={{ color: '#f59e0b', marginBottom: '-2px' }} /> Rating</span>
+                            <div className={styles.profileStats}>
+                                <div className={styles.stat}>
+                                    <span className={styles.statValue}>{user.average_rating || 0}</span>
+                                    <span className={styles.statLabel}><FiStar size={16} /> Rating</span>
                                 </div>
-                                <div className="stat">
-                                    <span className="stat-value">{user.review_count || 0}</span>
-                                    <span className="stat-label">Reviews</span>
+                                <div className={styles.stat}>
+                                    <span className={styles.statValue}>{user.review_count || 0}</span>
+                                    <span className={styles.statLabel}>Reviews</span>
                                 </div>
                             </div>
                         )}
@@ -234,110 +234,112 @@ const Profile = () => {
                 </div>
 
                 {/* Content Grid */}
-                <div className="profile-grid">
+                <div className={styles.profileGrid}>
 
-                    {/* Column 1: Personal Info & Bio */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-                        <div className="card">
-                            <div className="card-header">
-                                <h2 className="card-title"><FiUser /> Personal Information</h2>
-                                <button className="edit-link" onClick={() => setIsEditProfileOpen(true)}>
-                                    <FiEdit2 /> Edit
+                    {/* Left Column: Personal Info & Bio */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                        <div className={styles.card}>
+                            <div className={styles.cardHeader}>
+                                <h2 className={styles.cardTitle}><FiUser /> Personal Details</h2>
+                                <button className={styles.editLink} onClick={() => setIsEditProfileOpen(true)}>
+                                    <FiEdit2 size={16} /> Edit
                                 </button>
                             </div>
-                            <div className="info-list">
-                                <div className="info-row">
-                                    <span className="info-label">Full Name</span>
-                                    <span className="info-value">{user.name}</span>
+                            <div className={styles.infoList}>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.infoLabel}>Full Name</span>
+                                    <span className={styles.infoValue}>{user.name}</span>
                                 </div>
-                                <div className="info-row">
-                                    <span className="info-label">Mobile Number</span>
-                                    <span className="info-value">{user.mobile_no || 'Not provided'}</span>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.infoLabel}>Mobile Number</span>
+                                    <span className={styles.infoValue}>{user.mobile_no || 'Not provided'}</span>
                                 </div>
-                                <div className="info-row">
-                                    <span className="info-label">Account Status</span>
-                                    <span className="info-value" style={{ textTransform: 'capitalize' }}>{user.status || 'Active'}</span>
+                                <div className={styles.infoRow}>
+                                    <span className={styles.infoLabel}>Account Status</span>
+                                    <span className={`${styles.statusBadge} ${user.status === 1 || user.status === "1" ? styles.statusActive : styles.statusDeactive}`}>
+                                        {user.status === 1 || user.status === "1" ? 'Active' : 'Deactive'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
                         {isProvider && user.description && (
-                            <div className="card">
-                                <div className="card-header">
-                                    <h2 className="card-title"><FiBriefcase /> About Me</h2>
+                            <div className={styles.card}>
+                                <div className={styles.cardHeader}>
+                                    <h2 className={styles.cardTitle}><FiBriefcase /> Professional Bio</h2>
                                 </div>
-                                <p className="bio-text">{user.description}</p>
+                                <p className={styles.bioText}>{user.description}</p>
                             </div>
                         )}
                     </div>
 
-                    {/* Column 2: Address & Services */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-                        <div className="card">
-                            <div className="card-header">
-                                <h2 className="card-title"><FiMapPin /> Address Details</h2>
-                                <button className="edit-link" onClick={() => setIsEditAddressOpen(true)}>
-                                    <FiEdit2 /> Edit
+                    {/* Right Column: Address & Services */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                        <div className={styles.card}>
+                            <div className={styles.cardHeader}>
+                                <h2 className={styles.cardTitle}><FiMapPin /> Primary Address</h2>
+                                <button className={styles.editLink} onClick={() => setIsEditAddressOpen(true)}>
+                                    <FiEdit2 size={16} /> Update
                                 </button>
                             </div>
                             {user.address ? (
-                                <div className="info-list">
-                                    <div className="info-row">
-                                        <span className="info-label">Country</span>
-                                        <span className="info-value">{user.address.country}</span>
+                                <div className={styles.infoList}>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>Country</span>
+                                        <span className={styles.infoValue}>{user.address.country}</span>
                                     </div>
-                                    <div className="info-row">
-                                        <span className="info-label">State</span>
-                                        <span className="info-value">{user.address.state}</span>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>State</span>
+                                        <span className={styles.infoValue}>{user.address.state}</span>
                                     </div>
-                                    <div className="info-row">
-                                        <span className="info-label">City</span>
-                                        <span className="info-value">{user.address.city}</span>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>City</span>
+                                        <span className={styles.infoValue}>{user.address.city}</span>
                                     </div>
-                                    <div className="info-row">
-                                        <span className="info-label">Area</span>
-                                        <span className="info-value">{user.address.area || '-'}</span>
+                                    <div className={styles.infoRow}>
+                                        <span className={styles.infoLabel}>Area</span>
+                                        <span className={styles.infoValue}>{user.address.area || '-'}</span>
                                     </div>
                                 </div>
                             ) : (
-                                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-light)' }}>
-                                    <p>No address details added yet.</p>
-                                    <button className="btn-primary" style={{ marginTop: '10px' }} onClick={() => setIsEditAddressOpen(true)}>
-                                        Add Address
+                                <div className={styles.noAddressContent}>
+                                    <p>Your address information is missing.</p>
+                                    <button className={styles.btnPrimary} onClick={() => setIsEditAddressOpen(true)}>
+                                        Setup Address
                                     </button>
                                 </div>
                             )}
                         </div>
 
-                        {/* Services (Provider Only) */}
+                        {/* Services & Areas (Provider Only) */}
                         {isProvider && (
-                            <>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
                                 {user.services && user.services.length > 0 && (
-                                    <div className="card">
-                                        <div className="card-header">
-                                            <h2 className="card-title"><FiGrid /> Services</h2>
+                                    <div className={styles.card}>
+                                        <div className={styles.cardHeader}>
+                                            <h2 className={styles.cardTitle}><FiGrid /> Offered Services</h2>
                                         </div>
-                                        <div className="tags-container">
+                                        <div className={styles.tagsContainer}>
                                             {user.services.map(s => (
-                                                <span key={s.id} className="tag">{s.name}</span>
+                                                <span key={s.id} className={styles.tag}>{s.name}</span>
                                             ))}
                                         </div>
                                     </div>
                                 )}
 
                                 {user.areas && user.areas.length > 0 && (
-                                    <div className="card">
-                                        <div className="card-header">
-                                            <h2 className="card-title"><FiMapPin /> Service Areas</h2>
+                                    <div className={styles.card}>
+                                        <div className={styles.cardHeader}>
+                                            <h2 className={styles.cardTitle}><FiMapPin /> Covered Service Areas</h2>
                                         </div>
-                                        <div className="tags-container">
+                                        <div className={styles.tagsContainer}>
                                             {user.areas.map(a => (
-                                                <span key={a.id} className="tag">{a.name}</span>
+                                                <span key={a.id} className={styles.tag}>{a.name}</span>
                                             ))}
                                         </div>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         )}
                     </div>
 
@@ -346,31 +348,32 @@ const Profile = () => {
 
             {/* Modals */}
             {isEditProfileOpen && (
-                <div className="modal-overlay" onClick={() => setIsEditProfileOpen(false)}>
-                    <div className="modal-container" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h3>Edit Personal Info</h3>
-                            <button className="close-modal-btn" onClick={() => setIsEditProfileOpen(false)}>
+                <div className={styles.modalOverlay} onClick={() => setIsEditProfileOpen(false)}>
+                    <div className={styles.modalContainer} onClick={e => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3>Edit Profile</h3>
+                            <button className={styles.closeModalBtn} onClick={() => setIsEditProfileOpen(false)}>
                                 <FiX />
                             </button>
                         </div>
-                        <div className="modal-body">
+                        <div className={styles.modalBody}>
                             <form id="profileForm" onSubmit={handleProfileUpdate}>
-                                <div className="form-field">
+                                <div className={styles.formField}>
                                     <label>Full Name</label>
                                     <input
                                         type="text"
-                                        className="form-input"
+                                        className={styles.formInput}
                                         value={profileForm.name}
                                         onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
                                         required
+                                        placeholder="Enter your full name"
                                     />
                                 </div>
-                                <div className="form-field">
+                                <div className={styles.formField}>
                                     <label>Mobile Number</label>
                                     <input
                                         type="text"
-                                        className="form-input"
+                                        className={styles.formInput}
                                         value={profileForm.mobile_no}
                                         onChange={e => setProfileForm({ ...profileForm, mobile_no: e.target.value })}
                                         placeholder="+1 234 567 890"
@@ -378,29 +381,29 @@ const Profile = () => {
                                 </div>
                             </form>
                         </div>
-                        <div className="modal-footer">
-                            <button className="btn-secondary" onClick={() => setIsEditProfileOpen(false)}>Cancel</button>
-                            <button type="submit" form="profileForm" className="btn-primary">Save Changes</button>
+                        <div className={styles.modalFooter}>
+                            <button className={styles.btnSecondary} onClick={() => setIsEditProfileOpen(false)}>Cancel</button>
+                            <button type="submit" form="profileForm" className={styles.btnPrimary}>Save Changes</button>
                         </div>
                     </div>
                 </div>
             )}
 
             {isEditAddressOpen && (
-                <div className="modal-overlay" onClick={() => setIsEditAddressOpen(false)}>
-                    <div className="modal-container" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h3>Update Address</h3>
-                            <button className="close-modal-btn" onClick={() => setIsEditAddressOpen(false)}>
+                <div className={styles.modalOverlay} onClick={() => setIsEditAddressOpen(false)}>
+                    <div className={styles.modalContainer} onClick={e => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3>Update Location</h3>
+                            <button className={styles.closeModalBtn} onClick={() => setIsEditAddressOpen(false)}>
                                 <FiX />
                             </button>
                         </div>
-                        <div className="modal-body">
+                        <div className={styles.modalBody}>
                             <form id="addressForm" onSubmit={handleAddressUpdate}>
-                                <div className="form-field">
+                                <div className={styles.formField}>
                                     <label>Country</label>
                                     <select
-                                        className="form-select"
+                                        className={styles.formSelect}
                                         value={addressForm.country}
                                         onChange={handleCountryChange}
                                     >
@@ -410,10 +413,10 @@ const Profile = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-field">
+                                <div className={styles.formField}>
                                     <label>State</label>
                                     <select
-                                        className="form-select"
+                                        className={styles.formSelect}
                                         value={addressForm.state}
                                         onChange={handleStateChange}
                                         disabled={!addressForm.country}
@@ -424,10 +427,10 @@ const Profile = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-field">
+                                <div className={styles.formField}>
                                     <label>City</label>
                                     <select
-                                        className="form-select"
+                                        className={styles.formSelect}
                                         value={addressForm.city}
                                         onChange={handleCityChange}
                                         disabled={!addressForm.state}
@@ -438,10 +441,10 @@ const Profile = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-field">
+                                <div className={styles.formField}>
                                     <label>Area</label>
                                     <select
-                                        className="form-select"
+                                        className={styles.formSelect}
                                         value={areas.find(a => a.name === addressForm.area)?.id || ''}
                                         onChange={handleAreaChange}
                                         disabled={!addressForm.city}
@@ -454,9 +457,9 @@ const Profile = () => {
                                 </div>
                             </form>
                         </div>
-                        <div className="modal-footer">
-                            <button className="btn-secondary" onClick={() => setIsEditAddressOpen(false)}>Cancel</button>
-                            <button type="submit" form="addressForm" className="btn-primary">Save Address</button>
+                        <div className={styles.modalFooter}>
+                            <button className={styles.btnSecondary} onClick={() => setIsEditAddressOpen(false)}>Discard</button>
+                            <button type="submit" form="addressForm" className={styles.btnPrimary}>Save Address</button>
                         </div>
                     </div>
                 </div>

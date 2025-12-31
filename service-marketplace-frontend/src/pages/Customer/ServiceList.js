@@ -148,7 +148,7 @@ const ServiceList = () => {
                                             )}
                                             <p>{service.description ? (service.description.length > 80 ? service.description.substring(0, 80) + '...' : service.description) : 'No description available.'}</p>
                                             <div className="card-footer">
-                                                <Link to={`/services/${service.id}`} className="btn-details">
+                                                <Link to={`/services/by-name/${encodeURIComponent(service.name)}`} className="btn-details">
                                                     View Details
                                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                                 </Link>
