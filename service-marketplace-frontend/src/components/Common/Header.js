@@ -265,7 +265,19 @@ const Header = () => {
                                     onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                                 >
                                     <div className={styles.userAvatar}>
-                                        {user.name?.charAt(0).toUpperCase() || 'U'}
+                                        {user.profile_image ? (
+                                            <img
+                                                src={
+                                                    (user.profile_image.startsWith('data:') || user.profile_image.startsWith('http'))
+                                                        ? user.profile_image
+                                                        : `data:image/jpeg;base64,${user.profile_image}`
+                                                }
+                                                alt={user.name}
+                                                className={styles.avatarImg}
+                                            />
+                                        ) : (
+                                            user.name?.charAt(0).toUpperCase() || 'U'
+                                        )}
                                     </div>
                                     <span className={styles.userName}>{user.name}</span>
                                     <svg className={`${styles.dropdownArrow} ${isProfileDropdownOpen ? styles.open : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

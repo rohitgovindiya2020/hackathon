@@ -15,6 +15,13 @@ const MyAreaDiscounts = () => {
 
     useEffect(() => {
         const fetchDiscounts = async () => {
+            // Only fetch if at least some location is selected
+            if (!selectedLocation.country && !selectedLocation.state && !selectedLocation.city && !selectedLocation.area) {
+                setLoading(false);
+                setDiscounts([]);
+                return;
+            }
+
             setLoading(true);
             try {
                 // Construct query params from selected location

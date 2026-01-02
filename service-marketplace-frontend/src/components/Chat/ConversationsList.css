@@ -1,0 +1,116 @@
+.conversations-container {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+}
+
+.conv-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
+}
+
+.conv-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.conv-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.conv-item:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+.conv-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.conv-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 20px;
+    border: 2px solid white;
+}
+
+.conv-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.conv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.conv-name {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 0.95rem;
+}
+
+.conv-time {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.conv-last-msg {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conv-last-msg.unread {
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.no-conv {
+    text-align: center;
+    padding: 3rem;
+    color: #64748b;
+    font-size: 0.9rem;
+    background: #f1f5f9;
+    border-radius: 12px;
+}
+
+.conv-loading {
+    padding: 2rem;
+    text-align: center;
+    color: #64748b;
+}

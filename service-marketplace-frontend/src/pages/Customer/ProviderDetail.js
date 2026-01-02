@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import api from '../../services/api';
 import { Header, Footer } from '../../components/Common';
 import { useAuth } from '../../contexts/AuthContext';
+import ChatWindow from '../../components/Chat/ChatWindow';
 import './ProviderDetail.css';
 
 const ProviderDetail = () => {
@@ -11,6 +12,7 @@ const ProviderDetail = () => {
     const [provider, setProvider] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('about');
+    const [activeChat, setActiveChat] = useState(null);
 
     // Review Form State
     const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
@@ -122,7 +124,11 @@ const ProviderDetail = () => {
                             <div className="pd-profile-visual">
                                 <div className="pd-avatar-frame">
                                     <img
-                                        src={provider.profile_image ? (provider.profile_image.startsWith('data:') ? provider.profile_image : `data:image/jpeg;base64,${provider.profile_image}`) : `https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=600`}
+                                        src={provider.profile_image ? (
+                                            (provider.profile_image.startsWith('data:') || provider.profile_image.startsWith('http'))
+                                                ? provider.profile_image
+                                                : `data:image/jpeg;base64,${provider.profile_image}`
+                                        ) : `https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=600`}
                                         alt={provider.name}
                                     />
                                     <div className="pd-pro-badge">VERIFIED EXPERT</div>
@@ -145,8 +151,12 @@ const ProviderDetail = () => {
                             </div>
 
                             <div className="pd-cta-card">
-                                <button className="pd-btn-primary">Book Appointment</button>
-                                <button className="pd-btn-secondary">Message Expert</button>
+                                <button
+                                    className="pd-btn-secondary"
+                                    onClick={() => setActiveChat(provider)}
+                                >
+                                    Message Expert
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -176,7 +186,12 @@ const ProviderDetail = () => {
                                     <h2 className="pd-section-title">Service Menu</h2>
                                     <div className="pd-services-grid">
                                         {provider.services && provider.services.length > 0 ? provider.services.map(service => {
-                                            const serviceDiscount = provider.discounts?.find(d => d.service_id === service.id && d.is_active);
+                                            const serviceDiscount = provider.discounts?.find(d => {
+                                                const interestDate = new Date(d.interest_to_date);
+                                                interestDate.setHours(23, 59, 59, 999);
+                                                return Number(d.service_id) === Number(service.id) &&
+                                                    (d.is_active || interestDate >= new Date());
+                                            });
                                             return (
                                                 <div key={service.id} className="pd-service-card">
                                                     <div className="pd-service-header">
@@ -316,6 +331,14 @@ const ProviderDetail = () => {
             </main>
 
             <Footer />
+
+            {/* Chat Window Overlay */}
+            {activeChat && user && (
+                <ChatWindow
+                    partner={activeChat}
+                    onClose={() => setActiveChat(null)}
+                />
+            )}
         </div>
     );
 };

@@ -142,13 +142,20 @@ const CustomerManagement = () => {
                                         <td>
                                             <div className="customer-info">
                                                 {customer.profile_image ? (
-                                                    <img src={customer.profile_image} alt={customer.name} className="avatar-small" />
+                                                    <img
+                                                        src={
+                                                            (customer.profile_image.startsWith('data:') || customer.profile_image.startsWith('http'))
+                                                                ? customer.profile_image
+                                                                : `data:image/jpeg;base64,${customer.profile_image}`
+                                                        }
+                                                        alt={customer.name}
+                                                        className="avatar-small"
+                                                    />
                                                 ) : (
                                                     <div className="avatar-small">
                                                         {customer.name.charAt(0).toUpperCase()}
                                                     </div>
                                                 )}
-                                                <span>{customer.name}</span>
                                             </div>
                                         </td>
                                         <td>{customer.email}</td>

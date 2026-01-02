@@ -46,4 +46,45 @@ class ServiceAreaController extends Controller
             ->pluck('area');
         return response()->json($areas);
     }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'country' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'area' => 'required|string|max:255',
+        ]);
+
+        $serviceArea = \App\Models\ServiceArea::create($validated);
+        return response()->json($serviceArea, 201);
+    }
+
+    public function show($id)
+    {
+        $serviceArea = \App\Models\ServiceArea::findOrFail($id);
+        return response()->json($serviceArea);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $serviceArea = \App\Models\ServiceArea::findOrFail($id);
+        
+        $validated = $request->validate([
+            'country' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'area' => 'required|string|max:255',
+        ]);
+
+        $serviceArea->update($validated);
+        return response()->json($serviceArea);
+    }
+
+    public function destroy($id)
+    {
+        $serviceArea = \App\Models\ServiceArea::findOrFail($id);
+        $serviceArea->delete();
+        return response()->json(null, 204);
+    }
 }

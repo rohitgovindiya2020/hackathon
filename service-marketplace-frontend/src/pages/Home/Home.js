@@ -2,25 +2,30 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Header, Footer } from '../../components/Common';
+import ChatWindow from '../../components/Chat/ChatWindow';
 import api from '../../services/api';
+import ProviderCard from '../../components/Provider/ProviderCard';
+
 
 // Swiper Imports
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay, Parallax, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import 'swiper/css/parallax';
+import 'swiper/css/effect-fade';
 
 import './Home.css';
 
 const Home = () => {
     const [isVisible, setIsVisible] = useState(false);
-    const [currentSlide, setCurrentSlide] = useState(0);
     const [openFaq, setOpenFaq] = useState(null);
     const [services, setServices] = useState([]);
     const [loadingServices, setLoadingServices] = useState(true);
     const [providers, setProviders] = useState([]);
     const [loadingProviders, setLoadingProviders] = useState(true);
+    const [activeChat, setActiveChat] = useState(null);
     const { user } = useAuth();
     const isProvider = user?.role === 'provider';
 
@@ -57,14 +62,9 @@ const Home = () => {
         }
     ];
 
-    const nextSlide = useCallback(() => {
-        setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-    }, [slides.length]);
 
     useEffect(() => {
         setIsVisible(true);
-
-        const timer = setInterval(nextSlide, 8000); // Slower for premium feel
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -79,10 +79,9 @@ const Home = () => {
         }, 100);
 
         return () => {
-            clearInterval(timer);
             observer.disconnect();
         };
-    }, [nextSlide, services]);
+    }, [services]);
 
     useEffect(() => {
         fetchServices();
@@ -143,172 +142,175 @@ const Home = () => {
             <Header />
 
             <main className="home-content">
-                {/* Premium Hero Slider */}
-                <section className="hero-premium-slider">
-                    <div className="slider-background-layer"></div>
-
-                    <div className="slider-container">
-                        {slides.map((slide, idx) => (
-                            <div
-                                key={slide.id}
-                                className={`slide-panel ${idx === currentSlide ? 'active' : ''} ${idx < currentSlide ? 'prev' : ''}`}
-                            >
-                                <div className="slide-image-wrapper">
+                {/* "Perfect" Minimalist Cinematic Hero Slider */}
+                <section className="hero-perfect-container">
+                    <Swiper
+                        modules={[Navigation, Pagination, Autoplay, Parallax, EffectFade]}
+                        speed={1500}
+                        parallax={true}
+                        effect="fade"
+                        fadeEffect={{ crossFade: true }}
+                        autoplay={{
+                            delay: 7000,
+                            disableOnInteraction: false,
+                        }}
+                        loop={true}
+                        onAutoplayTimeLeft={(s, time, progress) => {
+                            const progressBar = document.querySelector('.hero-progress-fill');
+                            if (progressBar) {
+                                progressBar.style.width = `${(1 - progress) * 100}%`;
+                            }
+                        }}
+                        navigation={{
+                            nextEl: '.hero-control-next',
+                            prevEl: '.hero-control-prev',
+                        }}
+                        className="hero-perfect-swiper"
+                    >
+                        {slides.map((slide) => (
+                            <SwiperSlide key={slide.id}>
+                                <div className="hero-slide-perfect-inner">
+                                    {/* Atmospheric Background */}
                                     <div
-                                        className="slide-bg-image"
+                                        className="hero-atmosphere-bg"
                                         style={{ backgroundImage: `url(${slide.image})` }}
-                                    ></div>
-                                    <div className="image-overlay"></div>
-                                </div>
+                                        data-swiper-parallax="40%"
+                                    >
+                                        <div className="vignette-overlay"></div>
+                                        <div className="grain-overlay"></div>
+                                    </div>
 
-                                <div className="container">
-                                    <div className="slide-content">
-                                        <div className="content-wrapper">
-                                            <span className="slide-badge">{slide.subtitle}</span>
-                                            <h1 className="slide-title">
-                                                {slide.title[0]}
-                                                <span className="title-highlight">{slide.title[1]}</span>
-                                            </h1>
-                                            <p className="slide-description">{slide.description}</p>
+                                    {/* Centered Luxury Content */}
+                                    <div className="container h-full">
+                                        <div className="hero-luxury-content">
+                                            <div className="content-reveal-layer" data-swiper-parallax="-300">
+                                                <div className="hero-entry-tag" data-swiper-parallax="-150">
+                                                    <span>{slide.subtitle}</span>
+                                                </div>
+                                                <h1 className="hero-perfect-title" data-swiper-parallax="-400">
+                                                    <span className="title-top">{slide.title[0]}</span>
+                                                    <span className="title-bottom italic-serif text-gradient">{slide.title[1]}</span>
+                                                </h1>
+                                                <p className="hero-perfect-desc" data-swiper-parallax="-500">
+                                                    {slide.description}
+                                                </p>
 
-                                            <div className="slide-actions">
-                                                <Link to={slide.link} className="btn-primary-elegant">
-                                                    <span>{slide.ctaPrimary}</span>
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M5 12h14M12 5l7 7-7 7" />
-                                                    </svg>
-                                                </Link>
-                                                <Link to="/about" className="btn-secondary-elegant">
-                                                    {slide.ctaSecondary}
-                                                </Link>
+                                                <div className="hero-perfect-actions" data-swiper-parallax="-600">
+                                                    <Link to={slide.link} className="btn-perfect-primary">
+                                                        {slide.ctaPrimary}
+                                                    </Link>
+                                                    <Link to="/about" className="btn-perfect-outline">
+                                                        <span>{slide.ctaSecondary}</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                                        </svg>
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </SwiperSlide>
                         ))}
-                    </div>
 
-                    {/* Slider Controls */}
-                    <div className="slider-controls">
-                        <div className="container">
-                            <div className="controls-wrapper">
-                                <button
-                                    className="nav-arrow nav-prev"
-                                    onClick={() => setCurrentSlide(prev => prev === 0 ? slides.length - 1 : prev - 1)}
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M19 12H5M12 19l-7-7 7-7" />
-                                    </svg>
-                                </button>
+                        {/* Luxury UI Controller */}
+                        <div className="hero-luxury-ui">
+                            <div className="container">
+                                <div className="luxury-controls-row">
+                                    <div className="hero-index-indicator">
+                                        <span className="current">01</span>
+                                        <div className="indicator-divider"></div>
+                                        <span className="total">0{slides.length}</span>
+                                    </div>
 
-                                <div className="slide-indicators">
-                                    {slides.map((_, idx) => (
-                                        <button
-                                            key={idx}
-                                            className={`indicator ${idx === currentSlide ? 'active' : ''}`}
-                                            onClick={() => setCurrentSlide(idx)}
-                                        >
-                                            <span className="indicator-number">0{idx + 1}</span>
-                                            <div className="indicator-bar">
-                                                <div className="bar-fill"></div>
-                                            </div>
+                                    <div className="hero-progress-container">
+                                        <div className="hero-progress-bar">
+                                            <div className="hero-progress-fill"></div>
+                                        </div>
+                                    </div>
+
+                                    <div className="hero-simple-arrows">
+                                        <button className="hero-control-btn hero-control-prev">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M15 18l-6-6 6-6" />
+                                            </svg>
                                         </button>
-                                    ))}
+                                        <button className="hero-control-btn hero-control-next">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M9 18l6-6-6-6" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
-
-                                <button
-                                    className="nav-arrow nav-next"
-                                    onClick={() => setCurrentSlide(prev => prev === slides.length - 1 ? 0 : prev + 1)}
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M5 12h14M12 5l7 7-7 7" />
-                                    </svg>
-                                </button>
                             </div>
                         </div>
-                    </div>
+                    </Swiper>
                 </section>
 
                 {/* Featured Services Section - Hidden for Providers */}
                 {!isProvider && (
-                    <section className="categories-section section-padding bg-light">
+                    <section className="categories-modern-section section-padding">
                         <div className="container">
-                            <div className="section-header-row reveal">
-                                <div className="section-header text-left">
-                                    <span className="section-overline">Platform Offerings</span>
-                                    <h2>Featured <span className="text-gradient">Services</span></h2>
-                                    <p>Discover professional solutions powered by our expert community.</p>
-                                </div>
-                                <div className="slider-nav-btns">
-                                    <button className="nav-btn prev-service">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
-                                    </button>
-                                    <button className="nav-btn next-service">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
-                                    </button>
-                                </div>
+                            <div className="section-header-centered reveal">
+                                <span className="section-overline">Excellence Defined</span>
+                                <h2 className="title-premium">Featured <span className="text-gradient">Services</span></h2>
+                                <p className="subtitle-premium">Discover professional solutions powered by our elite expert community.</p>
                             </div>
 
                             {loadingServices ? (
                                 <div className="services-loading">
                                     <div className="spinner-premium"></div>
-                                    <span>Curating best services...</span>
+                                    <span>Curating excellence...</span>
                                 </div>
                             ) : (
-                                <div className="services-slider-viewport">
+                                <div className="services-slider-wrapper">
                                     <Swiper
-                                        modules={[Navigation, Pagination, Autoplay]}
+                                        modules={[Pagination, Autoplay]}
                                         spaceBetween={30}
                                         slidesPerView={1}
-                                        navigation={{
-                                            prevEl: '.prev-service',
-                                            nextEl: '.next-service',
+                                        pagination={{
+                                            clickable: true,
+                                            el: '.modern-services-pagination'
                                         }}
-                                        pagination={{ clickable: true }}
                                         autoplay={{ delay: 5000, disableOnInteraction: false }}
                                         breakpoints={{
                                             768: { slidesPerView: 2 },
                                             1200: { slidesPerView: 3 },
                                         }}
-                                        className="services-swiper"
+                                        className="services-modern-swiper"
                                     >
                                         {services.map((service, idx) => (
                                             <SwiperSlide key={service.id}>
                                                 <div
-                                                    className="service-card-modern reveal"
+                                                    className="service-card-modern-v2 reveal"
                                                     style={{ animationDelay: `${idx * 0.1}s` }}
                                                 >
-                                                    <div className="service-visual-area">
+                                                    <div className="service-visual-v2">
                                                         <img
                                                             src={service.image || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=600'}
                                                             alt={service.name}
-                                                            className="service-hero-img"
+                                                            className="service-img-v2"
                                                         />
-                                                        <div className="service-glass-overlay"></div>
-                                                        <div className="service-badges-top">
-                                                            <span className="badge-live">LIVE</span>
-                                                            <span className="badge-category">{typeof service.category === 'object' ? service.category?.name : service.category || 'General'}</span>
+                                                        <div className="service-v2-overlay"></div>
+                                                        <div className="service-v2-badges">
+                                                            <span className="badge-v2-live">ELITE</span>
+                                                            <span className="badge-v2-cat">{typeof service.category === 'object' ? service.category?.name : service.category || 'General'}</span>
                                                         </div>
-                                                        <button className="btn-wishlist-glass">
-                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
-                                                        </button>
                                                     </div>
-                                                    <div className="service-details-area">
-                                                        <div className="service-meta-info">
-                                                            <div className="meta-rating">
+                                                    <div className="service-content-v2">
+                                                        <div className="service-v2-meta">
+                                                            <div className="v2-rating">
                                                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                                                                 <span>{service.rating || '4.9'}</span>
                                                             </div>
-                                                            <span className="meta-verified">● Verified</span>
+                                                            <span className="v2-status">Verified</span>
                                                         </div>
-                                                        <h3 className="service-title-modern">{service.name}</h3>
-                                                        <div className="service-price-row-modern">
-                                                            <Link to={`/services/${service.id}`} className="btn-book-cinematic">
+                                                        <h3 className="service-v2-title">{service.name}</h3>
+                                                        <div className="service-v2-actions">
+                                                            <Link to={`/services/${service.id}`} className="btn-v2-primary">
                                                                 <span>Reserve</span>
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                                             </Link>
-                                                            <Link to={`/services/by-name/${encodeURIComponent(service.name)}`} className="btn-view-all-providers">
+                                                            <Link to={`/services/by-name/${encodeURIComponent(service.name)}`} className="btn-v2-outline">
                                                                 <span>All Pros</span>
                                                             </Link>
                                                         </div>
@@ -317,158 +319,157 @@ const Home = () => {
                                             </SwiperSlide>
                                         ))}
                                     </Swiper>
+
+                                    {/* Modern Pagination Only */}
+                                    <div className="modern-slider-ui">
+                                        <div className="modern-services-pagination"></div>
+                                    </div>
                                 </div>
                             )}
-                            <div className="section-actions-center reveal" style={{ marginTop: '3rem' }}>
-                                <Link to="/services" className="btn-explore-all">
-                                    <span>Explore All Services</span>
-                                    <div className="btn-glow-ring"></div>
+
+                            <div className="section-actions-center reveal" style={{ marginTop: '4rem' }}>
+                                <Link to="/services" className="btn-modern-explore">
+                                    <span>View All Offerings</span>
+                                    <div className="btn-modern-glow"></div>
                                 </Link>
                             </div>
                         </div>
                     </section>
                 )}
 
-                {/* How it Works Section */}
-                < section className="how-it-works section-padding" >
-                    <div className="container">
-                        <div className="section-header reveal">
-                            <span className="section-overline">The Process</span>
-                            <h2>How It <span className="text-gradient">Works</span></h2>
-                            <p>Get your home tasks handled by experts in three simple steps.</p>
-                        </div>
-                        <div className="steps-container">
-                            <div className="step-item reveal">
-                                <div className="step-number-container">
-                                    <div className="step-number">01</div>
-                                    <div className="step-blob"></div>
-                                </div>
-                                <h3>Discover Deals</h3>
-                                <p>Browse premium services and find exclusive goal-based discounts in your area.</p>
+                {/* Enhanced How it Works Section - Hidden for Providers */}
+                {!isProvider && (
+                    <section className="how-it-works section-padding-lg">
+                        <div className="container">
+                            <div className="section-header-centered reveal">
+                                <span className="section-overline">Simplified Journey</span>
+                                <h2 className="title-premium">Your Path to <span className="text-gradient">Home Perfection</span></h2>
+                                <p className="subtitle-premium">Experience a seamless process from discovery to completion.</p>
                             </div>
-                            <div className="step-line reveal"></div>
-                            <div className="step-item reveal">
-                                <div className="step-number-container">
-                                    <div className="step-number">02</div>
-                                    <div className="step-blob second"></div>
-                                </div>
-                                <h3>Join Interest</h3>
-                                <p>Show interest in a deal to help reach the customer goal and unlock massive savings.</p>
-                            </div>
-                            <div className="step-line reveal"></div>
-                            <div className="step-item reveal">
-                                <div className="step-number-container">
-                                    <div className="step-number">03</div>
-                                    <div className="step-blob third"></div>
-                                </div>
-                                <h3>Unlock Coupon</h3>
-                                <p>Once the interest goal is reached, receive your unique coupon code instantly.</p>
-                            </div>
-                            <div className="step-line reveal"></div>
-                            <div className="step-item reveal">
-                                <div className="step-number-container">
-                                    <div className="step-number">04</div>
-                                    <div className="step-blob second"></div> {/* Reusing second blob style for variety */}
-                                </div>
-                                <h3>Book & Save</h3>
-                                <p>Coordinate your preferred slot with the provider and enjoy the service at a discount.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section >
 
-                {/* Top Rated Providers */}
-                <section className="providers-section section-padding">
-                    <div className="container">
-                        <div className="section-header reveal">
-                            <span className="section-overline">Elite Talent</span>
-                            <h2>Top Service <span className="text-gradient">Providers</span></h2>
-                            <p>Connect with our most highly rated and background-verified professionals.</p>
-                        </div>
+                            <div className="process-flow-container">
+                                <div className="process-line-path"></div>
 
-                        {loadingProviders ? (
-                            <div className="services-loading">
-                                <div className="spinner-premium"></div>
-                                <span>Discovering experts...</span>
-                            </div>
-                        ) : (
-                            <div className="providers-grid">
-                                {providers.map((pro, idx) => {
-                                    const avgRating = pro.reviews?.length > 0
-                                        ? (pro.reviews.reduce((acc, r) => acc + r.rating, 0) / pro.reviews.length).toFixed(1)
-                                        : 4.9;
-
-                                    return (
-                                        <div key={pro.id} className="provider-card-modern reveal" style={{ animationDelay: `${idx * 0.1}s` }}>
-                                            <div className="pro-card-header">
-                                                {pro.status === 1 && <span className="elite-badge">VERIFIED</span>}
-                                                <div className="pro-actions">
-                                                    <button className="pro-action-btn favorite">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
-                                                    </button>
-                                                </div>
+                                <div className="process-grid">
+                                    <div className="process-card-wrapper reveal" style={{ animationDelay: '0.1s' }}>
+                                        <div className="process-card-glass">
+                                            <div className="process-icon-box">
+                                                <div className="icon-glow"></div>
+                                                <span className="step-number-floating">01</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
                                             </div>
-
-                                            <div className="pro-main-info">
-                                                <div className="pro-avatar-wrapper">
-                                                    <div className="pro-avatar-ring"></div>
-                                                    <img
-                                                        src={pro.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(pro.name)}&background=random`}
-                                                        alt={pro.name}
-                                                        className="pro-avatar-img"
-                                                    />
-                                                    <div className="pro-status-pulse"></div>
-                                                </div>
-                                                <h3>{pro.name}</h3>
-                                                <span className="pro-role-tag">{pro.services?.[0]?.name || 'Service Professional'}</span>
+                                            <div className="process-text">
+                                                <h3>Discover Experts</h3>
+                                                <p>Explore our curated community of background-verified professionals tailored to your specific home needs.</p>
                                             </div>
-
-                                            <div className="pro-rating-row">
-                                                <div className="pro-stars">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <svg key={i} className={i < Math.floor(avgRating) ? 'star-filled' : 'star-empty'} viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                                        </svg>
-                                                    ))}
-                                                </div>
-                                                <span className="rating-count">({pro.reviews?.length || 0} reviews)</span>
-                                            </div>
-
-                                            <div className="pro-meta-grid">
-                                                <div className="meta-item">
-                                                    <span className="meta-label">Services</span>
-                                                    <span className="meta-value">{pro.services?.length || 0}</span>
-                                                </div>
-                                                <div className="meta-divider"></div>
-                                                <div className="meta-item">
-                                                    <span className="meta-label">Location</span>
-                                                    <span className="meta-value">{pro.address?.city || 'Local Area'}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="pro-card-footer">
-                                                <button className="btn-message-pro">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" /></svg>
-                                                </button>
-                                                <Link to={`/providers/${pro.id}`} className="btn-view-pro-profile">
-                                                    <span>View Profile</span>
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                                                </Link>
+                                            <div className="process-card-footer">
+                                                <span className="footer-tag">AI-Powered Search</span>
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        )}
+                                    </div>
 
-                        <div className="section-actions-center reveal" style={{ marginTop: '4rem' }}>
-                            <Link to="/providers" className="btn-explore-all">
-                                <span>Browse All Professionals</span>
-                                <div className="btn-glow-ring"></div>
-                            </Link>
+                                    <div className="process-card-wrapper reveal" style={{ animationDelay: '0.2s' }}>
+                                        <div className="process-card-glass">
+                                            <div className="process-icon-box second">
+                                                <div className="icon-glow"></div>
+                                                <span className="step-number-floating">02</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <div className="process-text">
+                                                <h3>Instant Booking</h3>
+                                                <p>Select your preferred professional and schedule a visit that fits your life perfectly with real-time availability.</p>
+                                            </div>
+                                            <div className="process-card-footer">
+                                                <span className="footer-tag">Real-time Sync</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="process-card-wrapper reveal" style={{ animationDelay: '0.3s' }}>
+                                        <div className="process-card-glass">
+                                            <div className="process-icon-box third">
+                                                <div className="icon-glow"></div>
+                                                <span className="step-number-floating">03</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A11.952 11.952 0 003 11.233c0 5.591 3.807 10.29 9 11.622 5.193-1.332 9-6.03 9-11.622 0-2.51-.774-4.858-2.091-6.808z" />
+                                                </svg>
+                                            </div>
+                                            <div className="process-text">
+                                                <h3>Guaranteed Quality</h3>
+                                                <p>Sit back as our experts deliver perfection. Every job is backed by our dedicated premium service guarantee.</p>
+                                            </div>
+                                            <div className="process-card-footer">
+                                                <span className="footer-tag">Quality Insured</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="process-card-wrapper reveal" style={{ animationDelay: '0.4s' }}>
+                                        <div className="process-card-glass">
+                                            <div className="process-icon-box fourth">
+                                                <div className="icon-glow"></div>
+                                                <span className="step-number-floating">04</span>
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                </svg>
+                                            </div>
+                                            <div className="process-text">
+                                                <h3>Secure Payments</h3>
+                                                <p>Experience hassle-free transactions with our encrypted payment system. Only pay once you're fully satisfied.</p>
+                                            </div>
+                                            <div className="process-card-footer">
+                                                <span className="footer-tag">Escrow Protection</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                )}
+
+                {/* Top Rated Providers - Hidden for Providers */}
+                {!isProvider && (
+                    <section className="providers-section section-padding">
+                        <div className="container">
+                            <div className="section-header reveal">
+                                <span className="section-overline">Elite Talent</span>
+                                <h2>Top Service <span className="text-gradient">Providers</span></h2>
+                                <p>Connect with our most highly rated and background-verified professionals.</p>
+                            </div>
+
+                            {loadingProviders ? (
+                                <div className="services-loading">
+                                    <div className="spinner-premium"></div>
+                                    <span>Discovering experts...</span>
+                                </div>
+                            ) : (
+                                <div className="providers-grid">
+                                    {providers.map((pro, idx) => (
+                                        <ProviderCard
+                                            key={pro.id}
+                                            pro={pro}
+                                            idx={idx}
+                                            setActiveChat={setActiveChat}
+                                        />
+                                    ))}
+
+                                </div>
+                            )}
+
+                            <div className="section-actions-center reveal" style={{ marginTop: '4rem' }}>
+                                <Link to="/providers" className="btn-explore-all">
+                                    <span>Browse All Professionals</span>
+                                    <div className="btn-glow-ring"></div>
+                                </Link>
+                            </div>
+                        </div>
+                    </section>
+                )}
 
                 {/* Experience Quality Section */}
                 < section className="experience-section section-padding bg-gradient-dark" >
@@ -655,69 +656,71 @@ const Home = () => {
 
 
 
-                {/* Immersive CTA Section */}
-                < section className="cta-immersion-section reveal section-padding" >
-                    <div className="cta-bg-shapes">
-                        <div className="glass-shape s1"></div>
-                        <div className="glass-shape s2"></div>
-                    </div>
-                    <div className="container">
-                        <div className="cta-theatrical-box">
-                            <div className="cta-content-column">
-                                <div className="cta-badge-modern">🚀 Limitless Possibilities</div>
-                                <h2 className="cta-title-ultra">
-                                    Ready to Transform<br />
-                                    Your <span className="text-gradient">Home Journey?</span>
-                                </h2>
-                                <p className="cta-p-premium">
-                                    Join thousands of satisfied homeowners who trust our verified experts
-                                    for their most important tasks. Quality guaranteed, every single time.
-                                </p>
+                {/* Immersive CTA Section - Hidden for Logged in Users */}
+                {!user && (
+                    <section className="cta-immersion-section reveal section-padding">
+                        <div className="cta-bg-shapes">
+                            <div className="glass-shape s1"></div>
+                            <div className="glass-shape s2"></div>
+                        </div>
+                        <div className="container">
+                            <div className="cta-theatrical-box">
+                                <div className="cta-content-column">
+                                    <div className="cta-badge-modern">🚀 Limitless Possibilities</div>
+                                    <h2 className="cta-title-ultra">
+                                        Ready to Transform<br />
+                                        Your <span className="text-gradient">Home Journey?</span>
+                                    </h2>
+                                    <p className="cta-p-premium">
+                                        Join thousands of satisfied homeowners who trust our verified experts
+                                        for their most important tasks. Quality guaranteed, every single time.
+                                    </p>
 
-                                <div className="cta-trust-grid">
-                                    <div className="cta-trust-card">
-                                        <div className="trust-icon-box">🛡️</div>
-                                        <div className="trust-info">
-                                            <h4>Quality Guarantee</h4>
-                                            <span>Verified Professionals</span>
+                                    <div className="cta-trust-grid">
+                                        <div className="cta-trust-card">
+                                            <div className="trust-icon-box">🛡️</div>
+                                            <div className="trust-info">
+                                                <h4>Quality Guarantee</h4>
+                                                <span>Verified Professionals</span>
+                                            </div>
+                                        </div>
+                                        <div className="cta-trust-card">
+                                            <div className="trust-icon-box">💬</div>
+                                            <div className="trust-info">
+                                                <h4>24/7 Support</h4>
+                                                <span>Always here to help</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="cta-trust-card">
-                                        <div className="trust-icon-box">💬</div>
-                                        <div className="trust-info">
-                                            <h4>24/7 Support</h4>
-                                            <span>Always here to help</span>
+
+                                    <div className="cta-main-actions">
+                                        <Link to="/register" className="btn-cta-cinematic">
+                                            <span>Start Your Journey</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                                        </Link>
+                                        <Link to="/register?role=provider" className="btn-cta-outline-glass">
+                                            Become a Partner
+                                        </Link>
+                                    </div>
+                                </div>
+
+                                <div className="cta-visual-column">
+                                    <div className="floating-trust-medal">
+                                        <div className="medal-content">
+                                            <span className="medal-number">4.9</span>
+                                            <span className="medal-stars">★★★★★</span>
+                                            <span className="medal-label">User Rating</span>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="cta-main-actions">
-                                    <Link to="/register" className="btn-cta-cinematic">
-                                        <span>Start Your Journey</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                                    </Link>
-                                    <Link to="/register?role=provider" className="btn-cta-outline-glass">
-                                        Become a Partner
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="cta-visual-column">
-                                <div className="floating-trust-medal">
-                                    <div className="medal-content">
-                                        <span className="medal-number">4.9</span>
-                                        <span className="medal-stars">★★★★★</span>
-                                        <span className="medal-label">User Rating</span>
+                                    <div className="security-seal-glass">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                                        <span>100% Secure Payments</span>
                                     </div>
-                                </div>
-                                <div className="security-seal-glass">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                                    <span>100% Secure Payments</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section >
+                    </section>
+                )}
 
                 {/* Statistics Highlights */}
                 < section className="stats-impact-section reveal section-padding" >
@@ -782,6 +785,14 @@ const Home = () => {
             </main >
 
             <Footer />
+
+            {/* Chat Window Overlay */}
+            {activeChat && user && (
+                <ChatWindow
+                    partner={activeChat}
+                    onClose={() => setActiveChat(null)}
+                />
+            )}
         </div >
     );
 };

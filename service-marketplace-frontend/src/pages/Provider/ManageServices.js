@@ -96,8 +96,8 @@ const ManageServices = () => {
         return myServices.some(s => s.id === serviceId);
     };
 
-    const filteredMyServices = myServices.filter(s =>
-        s.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredMyServices = (myServices || []).filter(s =>
+        (s.name || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const displayServices = activeTab === 'my' ? filteredMyServices : allServices;

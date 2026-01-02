@@ -14,6 +14,7 @@ import InterestedCustomers from './pages/Provider/InterestedCustomers';
 import CustomerDetails from './pages/Provider/CustomerDetails';
 import CustomerDashboard from './pages/Customer/Dashboard';
 import MyInterests from './pages/Customer/MyInterests';
+import DiscountHistory from './pages/Customer/DiscountHistory';
 import Settings from './pages/Customer/Settings';
 import AdminDashboard from './pages/Admin/Dashboard';
 import AdminLogin from './pages/Admin/AdminLogin';
@@ -28,6 +29,7 @@ import Profile from './pages/Profile/Profile';
 import MyAreaDiscounts from './pages/Customer/MyAreaDiscounts';
 import Search from './pages/Customer/Search';
 import NotFound from './pages/NotFound/NotFound';
+import GlobalChat from './components/Chat/GlobalChat';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
@@ -120,6 +122,15 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['customer']}>
                     <MyInterests />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/customer/history"
+                element={
+                  <ProtectedRoute allowedRoles={['customer']}>
+                    <DiscountHistory />
                   </ProtectedRoute>
                 }
               />
@@ -224,6 +235,7 @@ function App() {
               {/* Catch-all 404 route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <GlobalChat />
           </div>
         </LocationProvider>
       </AuthProvider>

@@ -25,8 +25,11 @@ const CustomerDetails = () => {
             setLoading(true);
             const res = await api.get(`/discounts/${discountId}/customers/${customerId}`);
             setDetails(res.data.data);
-            if (res.data.data.promo_code) {
+            // Don't pre-fill promo code if it's not claimed yet, so provider can enter it
+            if (res.data.data.booking_status === 'claimed') {
                 setPromoCode(res.data.data.promo_code);
+            } else {
+                setPromoCode('');
             }
             if (res.data.data.provider_suggested_date) {
                 setSuggestedDate(res.data.data.provider_suggested_date);
@@ -52,7 +55,7 @@ const CustomerDetails = () => {
             await api.post(`/discounts/${discountId}/customers/${customerId}/promo-code`, {
                 promo_code: promoCode
             });
-            toast.success('Promo code submitted successfully');
+            toast.success('Promo code verified and discount claimed!');
             fetchCustomerDetails(); // Refresh details
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to submit promo code');
@@ -184,9 +187,9 @@ const CustomerDetails = () => {
                                                         borderRadius: '20px',
                                                         fontSize: '0.75rem',
                                                         fontWeight: '700',
-                                                        background: details.booking_status === 'approved' ? 'rgba(16, 185, 129, 0.1)' : (details.booking_status === 'suggested' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(245, 158, 11, 0.1)'),
-                                                        color: details.booking_status === 'approved' ? 'var(--success)' : (details.booking_status === 'suggested' ? 'var(--primary-color)' : '#f59e0b'),
-                                                        border: `1px solid ${details.booking_status === 'approved' ? 'rgba(16, 185, 129, 0.2)' : (details.booking_status === 'suggested' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(245, 158, 11, 0.2)')}`
+                                                        background: details.booking_status === 'approved' ? 'rgba(16, 185, 129, 0.1)' : (details.booking_status === 'suggested' ? 'rgba(59, 130, 246, 0.1)' : (details.booking_status === 'claimed' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)')),
+                                                        color: details.booking_status === 'approved' ? 'var(--success)' : (details.booking_status === 'suggested' ? 'var(--primary-color)' : (details.booking_status === 'claimed' ? 'var(--success)' : '#f59e0b')),
+                                                        border: `1px solid ${details.booking_status === 'approved' ? 'rgba(16, 185, 129, 0.2)' : (details.booking_status === 'suggested' ? 'rgba(59, 130, 246, 0.2)' : (details.booking_status === 'claimed' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)'))}`
                                                     }}>
                                                         {details.booking_status.toUpperCase()}
                                                     </span>
@@ -203,7 +206,12 @@ const CustomerDetails = () => {
                                                         Approve Slot
                                                     </button>
                                                     <button
-                                                        onClick={() => setIsSuggesting(true)}
+                                                        onClick={() => {
+                                                            setIsSuggesting(true);
+                                                            if (!suggestedDate && details.discount_start_date) {
+                                                                setSuggestedDate(details.discount_start_date);
+                                                            }
+                                                        }}
                                                         disabled={submitting}
                                                         style={{ flex: 1, padding: '12px', borderRadius: '8px', background: 'white', color: 'var(--primary-color)', fontWeight: '700', border: '2px solid var(--primary-color)', cursor: 'pointer' }}
                                                     >
@@ -262,11 +270,11 @@ const CustomerDetails = () => {
                                 </div>
                             </div>
 
-                            {/* Right Column: Promo Code Form */}
+                            {/* Right Column: Promo Code Verification Form */}
                             <div style={{ background: 'white', padding: '30px', borderRadius: '16px', border: '1px solid var(--card-border)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                                <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)', borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>Assign Promo Code</h3>
+                                <h3 style={{ marginBottom: '20px', fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)', borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>Verify & Claim Discount</h3>
                                 <p style={{ color: 'var(--text-muted)', marginBottom: '20px', fontSize: '0.9rem' }}>
-                                    Assign a unique promo code to this customer. Once submitted, the customer's interest will be marked as "Activated".
+                                    Enter the promo code provided by the customer to verify and mark this discount as "Claimed".
                                 </p>
                                 <form onSubmit={handleSubmitPromo}>
                                     <div style={{ marginBottom: '20px' }}>
@@ -275,7 +283,7 @@ const CustomerDetails = () => {
                                             type="text"
                                             value={promoCode}
                                             onChange={(e) => setPromoCode(e.target.value)}
-                                            placeholder="e.g. SAVE25-XYZ"
+                                            placeholder="Enter customer's code"
                                             style={{
                                                 width: '100%',
                                                 padding: '12px 16px',
@@ -287,34 +295,34 @@ const CustomerDetails = () => {
                                             }}
                                             onFocus={(e) => e.target.style.borderColor = 'var(--primary-color)'}
                                             onBlur={(e) => e.target.style.borderColor = 'var(--card-border)'}
-                                            disabled={details.is_activate && details.promo_code}
+                                            disabled={details.booking_status === 'claimed'}
                                         />
                                     </div>
                                     <button
                                         type="submit"
-                                        disabled={submitting || (details.is_activate && details.promo_code)}
+                                        disabled={submitting || details.booking_status === 'claimed'}
                                         style={{
                                             width: '100%',
                                             padding: '14px',
                                             borderRadius: '8px',
-                                            background: (details.is_activate && details.promo_code) ? '#94a3b8' : 'var(--primary-color)',
+                                            background: details.booking_status === 'claimed' ? '#94a3b8' : 'var(--primary-color)',
                                             color: 'white',
                                             fontWeight: '700',
                                             border: 'none',
-                                            cursor: (details.is_activate && details.promo_code) ? 'not-allowed' : 'pointer',
+                                            cursor: details.booking_status === 'claimed' ? 'not-allowed' : 'pointer',
                                             transition: 'transform 0.2s, opacity 0.2s'
                                         }}
-                                        onMouseOver={(e) => !submitting && !(details.is_activate && details.promo_code) && (e.target.style.opacity = '0.9')}
-                                        onMouseOut={(e) => !submitting && !(details.is_activate && details.promo_code) && (e.target.style.opacity = '1')}
+                                        onMouseOver={(e) => !submitting && details.booking_status !== 'claimed' && (e.target.style.opacity = '0.9')}
+                                        onMouseOut={(e) => !submitting && details.booking_status !== 'claimed' && (e.target.style.opacity = '1')}
                                     >
-                                        {submitting ? 'Submitting...' : (details.is_activate && details.promo_code) ? 'Promo Code Assigned' : 'Submit Promo Code'}
+                                        {submitting ? 'Verifying...' : (details.booking_status === 'claimed' ? 'Discount Claimed' : 'Verify & Claim')}
                                     </button>
                                 </form>
 
-                                {details.is_activate && details.promo_code ? (
+                                {details.booking_status === 'claimed' ? (
                                     <div style={{ marginTop: '20px', padding: '15px', background: 'rgba(16, 185, 129, 0.05)', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <span style={{ fontSize: '1.2rem' }}>✅</span>
-                                        <span style={{ color: 'var(--success)', fontWeight: '600', fontSize: '0.9rem' }}>This customer has been activated with promo code: <strong>{details.promo_code}</strong></span>
+                                        <span style={{ color: 'var(--success)', fontWeight: '600', fontSize: '0.9rem' }}>This discount has been successfully claimed with code: <strong>{details.promo_code}</strong></span>
                                     </div>
                                 ) : null}
                             </div>
