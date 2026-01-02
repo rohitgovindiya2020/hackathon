@@ -2,24 +2,61 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 import { Header, Footer } from '../../components/Common';
+import ProviderCard from '../../components/Provider/ProviderCard';
+import ChatWindow from '../../components/Chat/ChatWindow';
+
 import './Services.css'; // Reusing established styles for consistency
 
 const Search = () => {
     const [results, setResults] = useState({ services: [], providers: [], discounts: [] });
     const [loading, setLoading] = useState(true);
+    const [activeChat, setActiveChat] = useState(null);
+    const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+
+
     const location = useLocation();
 
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('q') || '';
 
     useEffect(() => {
-        if (query) {
-            handleSearch();
-        } else {
-            setLoading(false);
-        }
+        const fetchSearchResults = async () => {
+            if (query) {
+                await handleSearch();
+            } else {
+                setLoading(false);
+            }
+        };
+
+        fetchSearchResults();
         window.scrollTo(0, 0);
+
+        const handleMouseMove = (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            setMousePos({ x, y });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
     }, [query]);
+
+    useEffect(() => {
+        if (loading) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-up');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const revealElements = document.querySelectorAll('.reveal');
+        revealElements.forEach(el => observer.observe(el));
+
+        return () => observer.disconnect();
+    }, [loading, results]);
 
     const handleSearch = async () => {
         setLoading(true);
@@ -89,19 +126,18 @@ const Search = () => {
                                 {results.providers.length > 0 && (
                                     <div className="search-group" style={{ marginBottom: '4rem' }}>
                                         <h2 className="group-title" style={{ fontSize: '1.5rem', fontWeight: '800', color: '#0f172a', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '2px solid #f1f5f9' }}>Service Professionals ({results.providers.length})</h2>
-                                        <div className="services-list-grid">
-                                            {results.providers.map((pro) => (
-                                                <div key={pro.id} className="service-list-card">
-                                                    <div className="service-card-image">
-                                                        <img src={pro.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(pro.name)}&background=random`} alt={pro.name} />
-                                                    </div>
-                                                    <div className="service-card-content">
-                                                        <h3>{pro.name}</h3>
-                                                        <Link to={`/providers/${pro.id}`} className="btn-details">View Profile</Link>
-                                                    </div>
-                                                </div>
+                                        <div className="providers-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+                                            {results.providers.map((pro, idx) => (
+                                                <ProviderCard
+                                                    key={pro.id}
+                                                    pro={pro}
+                                                    idx={idx}
+                                                    setActiveChat={setActiveChat}
+                                                    mousePos={mousePos}
+                                                />
                                             ))}
                                         </div>
+
                                     </div>
                                 )}
 
@@ -131,7 +167,15 @@ const Search = () => {
                 </section>
             </main>
 
+            {activeChat && (
+                <ChatWindow
+                    partner={activeChat}
+                    onClose={() => setActiveChat(null)}
+                />
+            )}
+
             <Footer />
+
         </div>
     );
 };

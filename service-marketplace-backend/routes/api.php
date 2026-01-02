@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\DiscountController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ProviderServiceController;
+use App\Http\Controllers\Api\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +60,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/interests', [InterestController::class, 'store']);
     Route::delete('/interests/{id}', [InterestController::class, 'destroy']);
     Route::get('/my-interests', [InterestController::class, 'myInterests']);
+    Route::get('/interest-history', [InterestController::class, 'interestHistory']);
     Route::get('/my-interests/active-count', [InterestController::class, 'activeCount']);
+    Route::post('/interests/book', [InterestController::class, 'bookDiscount']);
+    Route::post('/interests/accept-suggestion', [InterestController::class, 'acceptSuggestion']);
+    Route::get('/discounts/{id}/booked-slots', [InterestController::class, 'getBookedSlots']);
 
     // Provider Services
     Route::get('/my-services', [ProviderServiceController::class, 'index']);
@@ -74,6 +79,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/reviews/{id}', [\App\Http\Controllers\Api\ReviewController::class, 'update']);
 
 
+    // Chat
+    Route::post('/chat/send', [ChatController::class, 'sendMessage']);
+    Route::get('/chat/messages/{partnerId}/{partnerType}', [ChatController::class, 'getMessages']);
+    Route::get('/chat/conversations', [ChatController::class, 'getConversations']);
+
     // Admin Routes
     Route::prefix('admin')->group(function () {
         Route::apiResource('customers', \App\Http\Controllers\Api\CustomerController::class);
@@ -83,6 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('settings', [\App\Http\Controllers\Api\SettingController::class, 'update']);
         Route::post('settings/test-email', [\App\Http\Controllers\Api\SettingController::class, 'testEmail']);
         Route::apiResource('admins', \App\Http\Controllers\Api\AdminController::class);
+        Route::get('dashboard/stats', [\App\Http\Controllers\Api\DashboardController::class, 'stats']);
     });
 });
 

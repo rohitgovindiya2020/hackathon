@@ -17,6 +17,7 @@ class ProfileController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'mobile_no' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'address' => 'nullable|array',
             'address.country' => 'nullable|string',
             'address.state' => 'nullable|string',
@@ -30,8 +31,17 @@ class ProfileController extends Controller
             unset($validated['password']);
         }
 
-        // Update basic info
-        $user->fill($validated);
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $filename = time() . '_' . $user->id . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('profiles', $filename, 'public');
+            $user->profile_image = asset('storage/' . $path);
+        }
+
+        // Update basic info (excluding address which is handled separately)
+        $basicData = collect($validated)->except(['address', 'profile_image'])->toArray();
+        $user->fill($basicData);
         
         // Handle Address
         if ($request->has('address')) {

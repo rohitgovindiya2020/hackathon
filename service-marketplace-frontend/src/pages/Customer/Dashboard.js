@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Header, Footer } from '../../components/Common';
 import api from '../../services/api';
 import styles from './Dashboard.module.css';
+import ConversationsList from '../../components/Chat/ConversationsList';
+import CustomerChatModal from '../../components/Chat/CustomerChatModal';
 
 const CustomerDashboard = () => {
     const { user } = useAuth();
@@ -11,6 +13,8 @@ const CustomerDashboard = () => {
     const location = useLocation();
 
     const [activeInterests, setActiveInterests] = useState(0);
+    const [activePartner, setActivePartner] = useState(null);
+    const [isChatOpen, setIsChatOpen] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -24,6 +28,11 @@ const CustomerDashboard = () => {
         } catch (error) {
             console.error('Error fetching dashboard stats:', error);
         }
+    };
+
+    const handleSelectConversation = (partner) => {
+        setActivePartner(partner);
+        setIsChatOpen(true);
     };
 
     const dashboardCards = [
@@ -87,18 +96,22 @@ const CustomerDashboard = () => {
                         ))}
                     </div>
 
-                    {/* Recent Activity Section */}
-                    <div className={styles.recentActivitySection}>
+                    {/* Recent Messages Section */}
+                    <div className={styles.recentMessagesSection}>
                         <div className={styles.sectionHeaderRow}>
-                            <h2>Recent Activity</h2>
-                            <button className={styles.btnTextOnly}>View All Activity</button>
+                            <h2>Recent Messages</h2>
                         </div>
-                        <div className={styles.activityPlaceholderCard}>
-                            <p>Stay tuned! Your latest activity and updates will appear here as you book services.</p>
-                        </div>
+                        <ConversationsList onSelectConversation={handleSelectConversation} />
                     </div>
                 </div>
             </main>
+
+            {/* Premium Chat Modal Overlay */}
+            <CustomerChatModal
+                isOpen={isChatOpen}
+                onClose={() => setIsChatOpen(false)}
+                initialPartner={activePartner}
+            />
 
             <Footer />
         </div>

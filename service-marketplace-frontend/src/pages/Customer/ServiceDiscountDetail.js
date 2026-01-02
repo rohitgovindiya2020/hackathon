@@ -72,6 +72,93 @@ const ServiceDiscountDetail = () => {
         }
     };
 
+    const [showBookingModal, setShowBookingModal] = useState(false);
+    const [bookingDate, setBookingDate] = useState('');
+    const [bookingHour, setBookingHour] = useState('');
+    const [bookingMinute, setBookingMinute] = useState('');
+    const [bookingTime, setBookingTime] = useState('');
+    const [submittingBooking, setSubmittingBooking] = useState(false);
+    const [acceptingSuggestion, setAcceptingSuggestion] = useState(false);
+    const [bookedSlots, setBookedSlots] = useState([]);
+
+    const fetchBookedSlots = async () => {
+        try {
+            const response = await api.get(`/discounts/${discountId}/booked-slots`);
+            setBookedSlots(response.data.bookedSlots || []);
+        } catch (error) {
+            console.error("Failed to fetch booked slots", error);
+        }
+    };
+
+    const handleOpenBooking = () => {
+        if (!isJoined) {
+            toast.error("Please join the deal first!");
+            return;
+        }
+        if (!discount.is_active) {
+            toast.error("Deal is not yet active. Booking will open once the goal is reached!");
+            return;
+        }
+        fetchBookedSlots();
+        setShowBookingModal(true);
+    };
+
+    useEffect(() => {
+        if (bookingHour && bookingMinute) {
+            setBookingTime(`${bookingHour}:${bookingMinute}`);
+        } else {
+            setBookingTime('');
+        }
+    }, [bookingHour, bookingMinute]);
+
+    const handleBookingSubmit = async (e) => {
+        e.preventDefault();
+        setSubmittingBooking(true);
+
+        if (!bookingTime) {
+            toast.error("Please select both hour and minute.");
+            setSubmittingBooking(false);
+            return;
+        }
+
+        try {
+            await api.post('/interests/book', {
+                discount_id: discount.id,
+                booking_date: bookingDate,
+                booking_time: bookingTime
+            });
+            toast.success("Booking request submitted successfully!");
+            setShowBookingModal(false);
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to submit booking.");
+        } finally {
+            setSubmittingBooking(false);
+        }
+    };
+
+    const handleAcceptSuggestion = async () => {
+        setAcceptingSuggestion(true);
+        try {
+            await api.post('/interests/accept-suggestion', {
+                discount_id: discount.id
+            });
+            toast.success("Suggestion accepted successfully!");
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to accept suggestion.");
+        } finally {
+            setAcceptingSuggestion(false);
+        }
+    };
+
+    // Helper to check if slot is taken
+    const isSlotTaken = (date, hour, minute) => {
+        if (!date || !hour || !minute) return false;
+        const timeToCheck = `${hour}:${minute}`;
+        return bookedSlots.some(slot => slot.booking_date === date && slot.booking_time.slice(0, 5) === timeToCheck);
+    };
+
     if (loading) {
         return (
             <div className="sdd-loading">
@@ -219,6 +306,44 @@ const ServiceDiscountDetail = () => {
                                     <p className="sdd-coupon-note">Save this code. You can use it during the redemption period once the deal is activated.</p>
                                 </div>
                             )}
+
+                            {/* Booking Status Display */}
+                            {isJoined && joinedInterest?.booking_status && (
+                                <div className="sdd-booking-status-box">
+                                    <div className="sdd-coupon-divider"></div>
+                                    <div className="sdd-status-grid">
+                                        <div className="sdd-status-item">
+                                            <span className="sdd-label">Booking Status</span>
+                                            <span className={`sdd-value-badge ${joinedInterest.booking_status}`}>
+                                                {joinedInterest.booking_status.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        {joinedInterest.booking_date && (
+                                            <div className="sdd-status-item">
+                                                <span className="sdd-label">Appointed Date</span>
+                                                <span className="sdd-value">{formatDate(joinedInterest.booking_date)} at {joinedInterest.booking_time}</span>
+                                            </div>
+                                        )}
+                                        {joinedInterest.provider_suggested_date && (
+                                            <div className="sdd-status-item suggested">
+                                                <span className="sdd-label">Provider Suggestion</span>
+                                                <span className="sdd-value">{formatDate(joinedInterest.provider_suggested_date)} at {joinedInterest.provider_suggested_time}</span>
+
+                                                {(joinedInterest.provider_suggested_date !== joinedInterest.booking_date ||
+                                                    joinedInterest.provider_suggested_time !== joinedInterest.booking_time) && (
+                                                        <button
+                                                            className="sdd-btn-accept-suggestion"
+                                                            onClick={handleAcceptSuggestion}
+                                                            disabled={acceptingSuggestion}
+                                                        >
+                                                            {acceptingSuggestion ? 'Accepting...' : 'Confirm & Accept Suggestion'}
+                                                        </button>
+                                                    )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Description Section */}
@@ -264,20 +389,89 @@ const ServiceDiscountDetail = () => {
 
                         {/* Timeline & Booking */}
                         <div className="sdd-footer-section">
-                            <button className="sdd-btn-book-now">
+                            <button
+                                className={`sdd-btn-book-now ${(!isJoined || !discount.is_active) ? 'disabled' : ''}`}
+                                onClick={handleOpenBooking}
+                            >
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                                     <line x1="16" y1="2" x2="16" y2="6" />
                                     <line x1="8" y1="2" x2="8" y2="6" />
                                     <line x1="3" y1="10" x2="21" y2="10" />
                                 </svg>
-                                Book This Service
+                                {!discount.is_active ? 'Goal Not Reached Yet' :
+                                    joinedInterest?.booking_date ? 'Change Booking Slot' : 'Book This Service'}
                             </button>
-                            <p className="sdd-footer-note">Instant booking available • Satisfaction guaranteed</p>
+                            <p className="sdd-footer-note">Instant booking available once deal is active • Satisfaction guaranteed</p>
                         </div>
                     </div>
                 </div>
             </main>
+
+            {/* Booking Modal */}
+            {showBookingModal && (
+                <div className="sdd-modal-backdrop" onClick={() => setShowBookingModal(false)}>
+                    <div className="sdd-modal-card animate-scale" onClick={e => e.stopPropagation()}>
+                        <div className="sdd-modal-header">
+                            <h2>Select Your Slot</h2>
+                            <button className="sdd-close-modal" onClick={() => setShowBookingModal(false)}>&times;</button>
+                        </div>
+                        <form onSubmit={handleBookingSubmit} className="sdd-booking-form">
+                            <div className="sdd-form-group">
+                                <label>Preferred Date</label>
+                                <input
+                                    type="date"
+                                    required
+                                    min={discount.discount_start_date}
+                                    max={discount.discount_end_date}
+                                    value={bookingDate}
+                                    onChange={(e) => setBookingDate(e.target.value)}
+                                />
+                                <small className="sdd-date-hint">Available: {formatDate(discount.discount_start_date)} - {formatDate(discount.discount_end_date)}</small>
+                            </div>
+                            <div className="sdd-form-group">
+                                <label>Preferred Time</label>
+                                <div className="sdd-time-grid">
+                                    <div className="sdd-time-col">
+                                        <select
+                                            required
+                                            value={bookingHour}
+                                            onChange={(e) => setBookingHour(e.target.value)}
+                                        >
+                                            <option value="">Hour</option>
+                                            {Array.from({ length: 24 }, (_, i) => {
+                                                const h = i.toString().padStart(2, '0');
+                                                return <option key={h} value={h}>{h}</option>;
+                                            })}
+                                        </select>
+                                    </div>
+                                    <div className="sdd-time-col">
+                                        <select
+                                            required
+                                            value={bookingMinute}
+                                            onChange={(e) => setBookingMinute(e.target.value)}
+                                        >
+                                            <option value="">Min</option>
+                                            {Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')).map(m => {
+                                                const taken = isSlotTaken(bookingDate, bookingHour, m);
+                                                return (
+                                                    <option key={m} value={m} disabled={taken && bookingHour}>
+                                                        {m} {taken && bookingHour ? '(Booked)' : ''}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" className="sdd-btn-submit-booking" disabled={submittingBooking}>
+                                {submittingBooking ? 'Submitting...' : 'Confirm Booking Slot'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );

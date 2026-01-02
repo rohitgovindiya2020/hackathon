@@ -209,8 +209,19 @@
 }
 
 /* Recent Activity Section */
-.recentActivitySection {
+.recentMessagesSection {
     margin-top: 60px;
+    background: white;
+    padding: 40px;
+    border-radius: 32px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+}
+
+.recentMessagesSection :global(.conversations-container) {
+    margin-top: 0;
+    box-shadow: none;
+    padding: 0;
 }
 
 .sectionHeaderRow {

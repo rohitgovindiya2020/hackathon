@@ -47,6 +47,48 @@ const ServiceDetail = () => {
         }
     };
 
+    // Helper to get category based on service name
+    const getServiceCategory = (name) => {
+        if (!name) return 'Home Service';
+        const lowerName = name.toLowerCase();
+        if (lowerName.includes('clean') || lowerName.includes('wash')) return 'Cleaning';
+        if (lowerName.includes('plumb') || lowerName.includes('leak')) return 'Plumbing';
+        if (lowerName.includes('electr') || lowerName.includes('wir')) return 'Electrical';
+        if (lowerName.includes('paint') || lowerName.includes('decor')) return 'Painting & Decor';
+        if (lowerName.includes('garden') || lowerName.includes('lawn')) return 'Gardening';
+        if (lowerName.includes('repair') || lowerName.includes('fix')) return 'Maintenance';
+        if (lowerName.includes('mov') || lowerName.includes('pack')) return 'Moving';
+        return 'Professional Service';
+    };
+
+    // Helper to get banner image based on service image field or service name/id
+    const getServiceBanner = (service) => {
+        if (!service) return 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=1600';
+
+        // Priority 1: Use uploaded image from database if available
+        if (service.image && service.image.trim() !== '') {
+            return service.image;
+        }
+
+        // Priority 2: Category-based images based on service name
+        const name = service.name.toLowerCase();
+        if (name.includes('clean')) return 'https://images.unsplash.com/photo-1581578731117-104529302f24?auto=format&fit=crop&q=80&w=1600';
+        if (name.includes('plumb')) return 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80&w=1600';
+        if (name.includes('electric')) return 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=1600';
+        if (name.includes('paint')) return 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=1600';
+        if (name.includes('garden')) return 'https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&q=80&w=1600';
+
+        // Priority 3: Fallback to consistent image based on ID
+        const images = [
+            'https://images.unsplash.com/photo-1505798577917-a651a5d40320?auto=format&fit=crop&q=80&w=1600',
+            'https://images.unsplash.com/photo-1517646287309-48b9ddbd246b?auto=format&fit=crop&q=80&w=1600',
+            'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=1600',
+            'https://images.unsplash.com/photo-1534398079543-7ade2e970845?auto=format&fit=crop&q=80&w=1600'
+        ];
+
+        return images[service.id % images.length];
+    };
+
     if (loading) return (
         <div className="detail-loading">
             <Header />
@@ -67,7 +109,7 @@ const ServiceDetail = () => {
             <main className="detail-main-content">
                 {/* Immersive Header Section */}
                 <section className="detail-hero">
-                    <div className="hero-bg" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=1600')` }}></div>
+                    <div className="hero-bg" style={{ backgroundImage: `url('${getServiceBanner(service)}')` }}></div>
                     <div className="container">
                         <div className="detail-hero-content animate-up">
                             <Link to="/services" className="back-link">
@@ -75,7 +117,7 @@ const ServiceDetail = () => {
                                 Back to All Services
                             </Link>
                             <div className="badge-row">
-                                <span className="cat-badge">{service.category}</span>
+                                <span className="cat-badge">{getServiceCategory(service.name)}</span>
                                 <div className="rating-badge">
                                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
                                     <span>4.9 (120+ reviews)</span>
@@ -221,7 +263,7 @@ const ServiceDetail = () => {
             </main>
 
             <Footer />
-        </div>
+        </div >
     );
 };
 

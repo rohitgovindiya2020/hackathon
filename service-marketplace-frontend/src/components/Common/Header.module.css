@@ -1,7 +1,8 @@
 /* Header.module.css - Ultra Modern & Premium */
 
 .modernHeader {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
@@ -183,7 +184,7 @@
 .headerSearch {
     position: relative;
     width: 100%;
-    max-width: 800px;
+    /* max-width: 800px; */
     padding: 0 40px;
 }
 
@@ -467,6 +468,14 @@
     font-weight: 800;
     font-size: 15px;
     box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+    overflow: hidden;
+}
+
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .userName {
@@ -615,7 +624,7 @@
 /* Mobile Menu */
 .mobileMenu {
     position: fixed;
-    top: 80px;
+    top: 90px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -856,7 +865,7 @@
 /* Responsive Breakpoints */
 @media (max-width: 1200px) {
     .headerSearch {
-        width: 240px;
+        /* width: 240px; */
     }
 }
 
@@ -876,11 +885,11 @@
 
 @media (max-width: 768px) {
     .modernHeader {
-        height: 72px;
+        /* height: 72px; */
     }
 
     .mobileMenu {
-        top: 72px;
+        top: 54px;
     }
 
     .logoText {

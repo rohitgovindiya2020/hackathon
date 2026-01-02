@@ -45,11 +45,13 @@ const ServiceList = () => {
     };
 
     const filteredServices = services.filter(service => {
-        const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            service.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const nameMatch = (service.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const descMatch = (service.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+
         const categoryName = service.category?.name || service.category;
         const matchesCategory = category ? categoryName === category : true;
-        return matchesSearch && matchesCategory;
+
+        return (nameMatch || descMatch) && matchesCategory;
     });
 
     return (

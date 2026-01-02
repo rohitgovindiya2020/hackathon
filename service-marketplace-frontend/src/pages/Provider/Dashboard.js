@@ -2,11 +2,15 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Header, Footer } from '../../components/Common';
+import ConversationsList from '../../components/Chat/ConversationsList';
+import ProviderChatModal from '../../components/Chat/ProviderChatModal';
 import styles from './ProviderDashboard.module.css';
 
 const ProviderDashboard = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const [isChatOpen, setIsChatOpen] = React.useState(false);
+    const [selectedPartner, setSelectedPartner] = React.useState(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -67,11 +71,28 @@ const ProviderDashboard = () => {
                         ))}
                     </div>
 
+                    {/* Messaging Section */}
+                    {user && (
+                        <div className={styles['animate-up']} style={{ animationDelay: '0.4s' }}>
+                            <ConversationsList onSelectConversation={(partner) => {
+                                setSelectedPartner(partner);
+                                setIsChatOpen(true);
+                            }} />
+                        </div>
+                    )}
+
                     {/* Active Jobs Section Removed */}
                 </div>
             </main>
 
             <Footer />
+
+            {/* WhatsApp-style Chat Modal */}
+            <ProviderChatModal
+                isOpen={isChatOpen}
+                onClose={() => setIsChatOpen(false)}
+                initialPartner={selectedPartner}
+            />
         </div>
     );
 };

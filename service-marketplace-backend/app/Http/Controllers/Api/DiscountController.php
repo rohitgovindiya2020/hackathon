@@ -9,6 +9,9 @@ use App\Models\Discount;
 use App\Models\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingApproved;
+use App\Mail\SlotSuggested;
 
 class DiscountController extends Controller
 {
@@ -150,7 +153,7 @@ class DiscountController extends Controller
     public function publicList(Request $request)
     {
         $query = Discount::with(['service', 'provider.address', 'address'])
-            ->where('is_active', true)
+            // ->where('is_active', true)
             ->whereDate('discount_end_date', '>=', now());
 
         $query->where(function ($q) use ($request) {
@@ -333,6 +336,13 @@ class DiscountController extends Controller
             'booking_status' => 'approved'
         ]);
 
+        // Send Email to Customer
+        try {
+            Mail::to($interest->customer->email)->send(new BookingApproved($interest));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send booking approval email: ' . $e->getMessage());
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Booking approved successfully.',
@@ -400,6 +410,13 @@ class DiscountController extends Controller
             'booking_status' => 'suggested'
         ]);
 
+        // Send Email to Customer
+        try {
+            Mail::to($interest->customer->email)->send(new SlotSuggested($interest));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send slot suggestion email: ' . $e->getMessage());
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Alternative slot suggested successfully.',
@@ -452,14 +469,22 @@ class DiscountController extends Controller
             ], 403);
         }
 
+        // Verify the promo code matches
+        if ($interest->promo_code !== $request->promo_code) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid promo code. Please enter the correct code provided by the customer.'
+            ], 422);
+        }
+
         $interest->update([
-            'promo_code' => $request->promo_code,
-            'is_activate' => true // Automatically activate when promo code is assigned
+            'booking_status' => 'claimed',
+            'is_activate' => true
         ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Promo code submitted and interest activated successfully.',
+            'message' => 'Promo code verified and discount claimed successfully.',
             'data' => $interest
         ]);
     }

@@ -155,7 +155,15 @@ const ProviderManagement = () => {
                                         <td>
                                             <div className="customer-info">
                                                 {provider.profile_image ? (
-                                                    <img src={provider.profile_image} alt={provider.name} className="avatar-small" />
+                                                    <img
+                                                        src={
+                                                            (provider.profile_image.startsWith('data:') || provider.profile_image.startsWith('http'))
+                                                                ? provider.profile_image
+                                                                : `data:image/jpeg;base64,${provider.profile_image}`
+                                                        }
+                                                        alt={provider.name}
+                                                        className="avatar-small"
+                                                    />
                                                 ) : (
                                                     <div className="avatar-small">
                                                         {provider.name.charAt(0).toUpperCase()}

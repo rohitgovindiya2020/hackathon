@@ -7,8 +7,10 @@ import {
     FiCamera, FiX, FiPhone, FiMail, FiCalendar, FiStar
 } from 'react-icons/fi';
 import { Header, Footer } from '../../components/Common';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Profile = () => {
+    const { updateUser } = useAuth();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -145,6 +147,7 @@ const Profile = () => {
         try {
             const res = await api.post('/profile', profileForm);
             setUser(res.data.user);
+            updateUser(res.data.user);
             setIsEditProfileOpen(false);
             toast.success('Profile updated successfully');
         } catch (error) {
@@ -159,11 +162,46 @@ const Profile = () => {
             const payload = { address: addressForm };
             const res = await api.post('/profile', payload);
             setUser(res.data.user);
+            updateUser(res.data.user);
             setIsEditAddressOpen(false);
             toast.success('Address updated successfully');
         } catch (error) {
             console.error(error);
             toast.error('Failed to update address');
+        }
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Basic validation
+        if (!file.type.startsWith('image/')) {
+            toast.error('Please select an image file');
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error('Image size should be less than 2MB');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('profile_image', file);
+
+        try {
+            const uploadToast = toast.loading('Uploading image...');
+            const res = await api.post('/profile', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setUser(res.data.user);
+            updateUser(res.data.user);
+            toast.success('Profile image updated successfully', { id: uploadToast });
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            toast.error(error.response?.data?.message || 'Failed to upload image');
         }
     };
 
@@ -193,14 +231,33 @@ const Profile = () => {
                     <div className={styles.heroCover}></div>
                     <div className={styles.heroContent}>
                         <div className={styles.profileAvatarWrapper}>
+                            <input
+                                type="file"
+                                id="avatar-upload"
+                                hidden
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                            />
                             {user.profile_image ? (
-                                <img src={user.profile_image} alt={user.name} className={styles.profileAvatar} />
+                                <img
+                                    src={
+                                        (user.profile_image.startsWith('data:') || user.profile_image.startsWith('http'))
+                                            ? user.profile_image
+                                            : `data:image/jpeg;base64,${user.profile_image}`
+                                    }
+                                    alt={user.name}
+                                    className={styles.profileAvatar}
+                                />
                             ) : (
                                 <div className={styles.avatarPlaceholder}>
                                     {user.name.charAt(0).toUpperCase()}
                                 </div>
                             )}
-                            <button className={styles.editAvatarBtn} title="Change Avatar">
+                            <button
+                                className={styles.editAvatarBtn}
+                                title="Change Avatar"
+                                onClick={() => document.getElementById('avatar-upload').click()}
+                            >
                                 <FiCamera size={20} />
                             </button>
                         </div>
@@ -253,12 +310,6 @@ const Profile = () => {
                                 <div className={styles.infoRow}>
                                     <span className={styles.infoLabel}>Mobile Number</span>
                                     <span className={styles.infoValue}>{user.mobile_no || 'Not provided'}</span>
-                                </div>
-                                <div className={styles.infoRow}>
-                                    <span className={styles.infoLabel}>Account Status</span>
-                                    <span className={`${styles.statusBadge} ${user.status === 1 || user.status === "1" ? styles.statusActive : styles.statusDeactive}`}>
-                                        {user.status === 1 || user.status === "1" ? 'Active' : 'Deactive'}
-                                    </span>
                                 </div>
                             </div>
                         </div>

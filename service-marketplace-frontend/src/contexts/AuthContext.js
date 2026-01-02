@@ -109,6 +109,12 @@ export const AuthProvider = ({ children }) => {
         setAdminUser(null);
     };
 
+    // Update user data globally
+    const updateUser = (userData) => {
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+    };
+
     const value = {
         user,
         adminUser,
@@ -118,6 +124,7 @@ export const AuthProvider = ({ children }) => {
         adminLogin,
         logout,
         adminLogout,
+        updateUser,
         isAuthenticated: !!user,
         isAdminAuthenticated: !!adminUser,
         isProvider: user?.role === 'provider',

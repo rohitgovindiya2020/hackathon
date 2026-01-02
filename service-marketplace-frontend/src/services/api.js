@@ -30,21 +30,31 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor to handle errors
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            const isAdminPath = window.location.pathname.startsWith('/admin');
+            const isLoginRequest = error.config.url.includes('/login');
 
-            if (error.config.url.includes('/admin') || isAdminPath) {
+            // Don't redirect if it's a login request - let the component handle the error
+            if (isLoginRequest) {
+                return Promise.reject(error);
+            }
+
+            if (error.config.url.includes('/admin')) {
+                // It's an admin request
                 localStorage.removeItem('admin_token');
                 localStorage.removeItem('admin_user');
-                window.location.href = '/admin/login';
+                if (window.location.pathname !== '/admin/login') {
+                    window.location.href = '/admin/login';
+                }
             } else {
+                // It's a regular user request
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/login';
+                if (window.location.pathname !== '/login') {
+                    window.location.href = '/login';
+                }
             }
         }
         return Promise.reject(error);

@@ -33,3 +33,10 @@ Schedule::call(function () {
         }
     }
 })->daily()->name('check-expired-discounts');
+
+// Deactivate discounts where end date has passed
+Schedule::call(function () {
+    \App\Models\Discount::where('is_active', 1)
+        ->where('discount_end_date', '<', now())
+        ->update(['is_active' => 0]);
+})->daily()->name('deactivate-finished-discounts');

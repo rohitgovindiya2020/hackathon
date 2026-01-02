@@ -8,6 +8,7 @@ import AreaManagement from './AreaManagement';
 import Settings from './Settings';
 import UserManagement from './UserManagement';
 import styles from './AdminDashboard.module.css';
+import api from '../../services/api';
 
 const AdminDashboard = () => {
     const { adminUser, adminLogout } = useAuth();
@@ -15,6 +16,25 @@ const AdminDashboard = () => {
     const { section } = useParams();
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [currentSection, setCurrentSection] = useState(section || 'dashboard');
+    const [dynamicStats, setDynamicStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await api.get('/admin/dashboard/stats');
+                setDynamicStats(response.data.stats);
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (currentSection === 'dashboard') {
+            fetchStats();
+        }
+    }, [currentSection]);
 
     useEffect(() => {
         if (section) {
@@ -29,9 +49,10 @@ const AdminDashboard = () => {
 
     const stats = [
         {
-            title: 'Total Users',
-            value: '1,234',
-            change: '+12%',
+            id: 'customers',
+            title: 'Total Customers',
+            value: dynamicStats?.find(s => s.id === 'customers')?.value || '...',
+            change: dynamicStats?.find(s => s.id === 'customers')?.change || '0%',
             icon: (
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88M13 7C13 9.20914 11.2091 11 9 11C6.79086 11 5 9.20914 5 7C5 4.79086 6.79086 3 9 3C11.2091 3 13 4.79086 13 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -40,9 +61,22 @@ const AdminDashboard = () => {
             gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         },
         {
+            id: 'providers',
+            title: 'Total Service Providers',
+            value: dynamicStats?.find(s => s.id === 'providers')?.value || '...',
+            change: dynamicStats?.find(s => s.id === 'providers')?.change || '0%',
+            icon: (
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88M13 7C13 9.20914 11.2091 11 9 11C6.79086 11 5 9.20914 5 7C5 4.79086 6.79086 3 9 3C11.2091 3 13 4.79086 13 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            ),
+            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        },
+        {
+            id: 'services',
             title: 'Active Services',
-            value: '456',
-            change: '+8%',
+            value: dynamicStats?.find(s => s.id === 'services')?.value || '...',
+            change: dynamicStats?.find(s => s.id === 'services')?.change || '0%',
             icon: (
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21 16V8C20.9996 7.64927 20.9071 7.30481 20.7315 7.00116C20.556 6.69751 20.3037 6.44536 20 6.27L13 2.27C12.696 2.09446 12.3511 2.00205 12 2.00205C11.6489 2.00205 11.304 2.09446 11 2.27L4 6.27C3.69626 6.44536 3.44398 6.69751 3.26846 7.00116C3.09294 7.30481 3.00036 7.64927 3 8V16C3.00036 16.3507 3.09294 16.6952 3.26846 16.9988C3.44398 17.3025 3.69626 17.5546 4 17.73L11 21.73C11.304 21.9055 11.6489 21.9979 12 21.9979C12.3511 21.9979 12.696 21.9055 13 21.73L20 17.73C20.3037 17.5546 20.556 17.3025 20.7315 16.9988C20.9071 16.6952 20.9996 16.3507 21 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -51,31 +85,6 @@ const AdminDashboard = () => {
                 </svg>
             ),
             gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-        },
-        {
-            title: 'Total Bookings',
-            value: '789',
-            change: '+15%',
-            icon: (
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M16 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M8 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            ),
-            gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        },
-        {
-            title: 'Revenue',
-            value: '$45.2K',
-            change: '+23%',
-            icon: (
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2V22M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-            ),
-            gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
         },
     ];
 
@@ -246,7 +255,7 @@ const AdminDashboard = () => {
                                             <div className={styles['stat-icon']} style={{ background: stat.gradient }}>
                                                 {stat.icon}
                                             </div>
-                                            <div className={`${styles['stat-change-pill']} ${styles.positive}`}>
+                                            <div className={`${styles['stat-change-pill']} ${stat.change.startsWith('-') ? styles.negative : styles.positive}`}>
                                                 {stat.change}
                                             </div>
                                         </div>
